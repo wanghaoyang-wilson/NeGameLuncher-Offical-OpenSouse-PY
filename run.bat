@@ -1,0 +1,1 @@
+Python.exe Local\main.py
