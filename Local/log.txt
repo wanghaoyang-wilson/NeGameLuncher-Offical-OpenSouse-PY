@@ -1,15 +1,6 @@
-<<<<<<< HEAD
 [2026:07:19:01:17:12:577] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI core is init
 [2026:07:19:01:17:13:324] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI core is setup
 [2026:07:19:01:17:13:328] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI core is set ico finish
 [2026:07:19:01:17:13:328] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI core is set window title
 [2026:07:19:01:17:13:328] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI Core Set Page to 1 page
 [2026:07:19:01:17:13:328] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI core load ui config
-=======
-[2026:07:19:01:17:12:577] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI core is init
-[2026:07:19:01:17:13:324] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI core is setup
-[2026:07:19:01:17:13:328] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI core is set ico finish
-[2026:07:19:01:17:13:328] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI core is set window title
-[2026:07:19:01:17:13:328] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI Core Set Page to 1 page
-[2026:07:19:01:17:13:328] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI core load ui config
->>>>>>> 31773b821b215859d6f47236e15a589ce8c55fb0
