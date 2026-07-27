@@ -1,6 +1,7 @@
-import sys
+import sys,os
 from PySide6.QtWidgets import *
 from PySide6.QtGui import *
+from PySide6.QtCore import *
 from ui_local_ui import Ui_MainWindow
 import cmd_model
 import enumList
@@ -17,6 +18,7 @@ class LuncherUI(QMainWindow):
         self.ui.setupUi(self)
         cmd_model.print_log('UI core is setup',enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None)
         self.setWindowIcon(QIcon(enumList.Other.APPICO))
+        self.setFixedSize(843, 636)
         cmd_model.print_log('UI core is set ico finish',enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None)
         self.setWindowTitle("Ne启动器")
         cmd_model.print_log('UI core is set window title',enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None)
@@ -47,6 +49,9 @@ class LuncherUI(QMainWindow):
         self.ui.tabWidget.setCurrentIndex(0)
         cmd_model.print_log('UI core is set style',enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None)
         self.ui.page.setStyleSheet(str(res_text.sk(enumList.theme.DARK)))
+        cmd_model.print_log('UI core is read run.html html',enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None)
+        run_html = os.path.abspath("Local/run.html")
+        self.ui.webEngineView.setUrl(QUrl.fromLocalFile(run_html))
     def login(self):
         cmd_model.print_log('UI core login button is push',enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None)
         if not(self.ui.Main_ZhangHao_Input.text() == None or self.ui.Main_PassWord_Input.text() == None):

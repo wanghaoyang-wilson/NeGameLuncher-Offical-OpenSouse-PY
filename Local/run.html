@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NE Launcher</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", system-ui;
+        }
+        body {
+            width: 843px;
+            height: 636px;
+            overflow: hidden;
+            background: #1f2937;
+            color: #f3f4f6;
+            user-select: none;
+            position: relative;
+        }
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+        /* 左侧侧边栏 */
+        .sidebar {
+            width: 220px;
+            height: 100%;
+            background: #111827;
+            padding: 32px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+        }
+        .avatar-box {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: #374151;
+            border: 3px solid #3b82f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            font-size: 14px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        /* 波纹动画 */
+        .ripple-wrap {
+            position: relative;
+            overflow: hidden;
+        }
+        .ripple {
+            position: absolute;
+            border-radius: inherit;
+            background: rgba(255,255,255,0.15);
+            transform: scale(0);
+            animation: rippleAnim 0.5s ease-out;
+            pointer-events: none;
+        }
+        @keyframes rippleAnim {
+            to {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+        .btn-group-bottom {
+            width: 100%;
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            gap:12px;
+        }
+        .row-two {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap:10px;
+        }
+        .action-btn {
+            height: 42px;
+            background: #374151;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+            position: relative;
+            overflow:hidden;
+        }
+        .action-btn:hover {
+            background: #4b5563;
+        }
+        .start-btn {
+            width: 100%;
+            height: 48px;
+            background: #2563eb;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            position: relative;
+            overflow:hidden;
+        }
+        .start-btn:hover {
+            background: #1d4ed8;
+        }
+        .start-btn:active {
+            transform: scale(0.97);
+        }
+        /* 右侧卡片容器 */
+        .main-content {
+            flex: 1;
+            height: 100%;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        /* 【更新后的长条提示符】左侧3px竖线 + 浅蓝底色 */
+        .banner-bar {
+            background:#334155;
+            border-radius:6px;
+            border-left: 3px solid #3b82f6;
+            padding:10px 14px;
+            margin-bottom:12px;
+            font-size:13px;
+            color:#e2e8f0;
+            font-weight:500;
+        }
+        /* 卡片样式 */
+        .card {
+            background:#272e3b;
+            border-radius:8px;
+            margin-bottom:12px;
+            overflow:hidden;
+        }
+        .card-header {
+            border-top: 1px solid #3b82f6;
+            padding:10px 14px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            background:#2c3442;
+            cursor:pointer;
+        }
+        .card-body {
+            padding:12px 14px;
+            display:flex;
+            flex-direction:column;
+            gap:10px;
+        }
+        /* 彩色文本 */
+        .text-red {color:#f87171;}
+        .text-green {color:#4ade80;}
+        .text-blue {color:#60a5fa;}
+        .text-yellow {color:#facc15;}
+        /* 无边框图片按钮 */
+        .img-btn-noborder{
+            background:transparent;
+            border:none;
+            width:36px;
+            height:36px;
+            cursor:pointer;
+        }
+        /* 右下角悬浮按钮组 */
+        .float-btn-container {
+            position: absolute;
+            right:16px;
+            bottom:16px;
+            display:flex;
+            flex-direction:column-reverse;
+            gap:10px;
+            z-index:99;
+        }
+        .float-btn {
+            width:44px;
+            height:44px;
+            border-radius:50%;
+            background:#2563eb;
+            border:none;
+            color:white;
+            cursor:pointer;
+            position:relative;
+            overflow:hidden;
+        }
+        .float-btn:hover {
+            background:#1d4ed8;
+        }
+        /* 跟随鼠标的Tooltip（独立悬浮层） */
+        #globalTooltip{
+            position:fixed;
+            pointer-events:none;
+            background:#111827;
+            padding:5px 10px;
+            border-radius:4px;
+            font-size:12px;
+            white-space:nowrap;
+            z-index:999;
+            display:none;
+        }
+        .demo-hide {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+<div id="globalTooltip"></div>
+
+<div class="container">
+    <div class="sidebar">
+        <div class="avatar-box ripple-wrap" id="avatar">头像</div>
+
+        <div class="btn-group-bottom">
+            <button class="start-btn ripple-wrap" id="startGameBtn">启动游戏</button>
+            <div class="row-two">
+                <button class="action-btn ripple-wrap" id="btnSelectVer">选择游戏版本</button>
+                <button class="action-btn ripple-wrap" id="btnSetting">游戏设置</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 右侧卡片渲染容器 -->
+    <div class="main-content" id="puiContainer">
+        <!-- 完整大容量实验演示页面 -->
+        <div id="experimentalDemo">
+            <div class="banner-bar">📢 系统提示长条 · 左侧3px蓝色竖标识线，浅蓝底色</div>
+
+            <div class="card">
+                <div class="card-header">基础文本 & 彩色文字演示（可折叠）</div>
+                <div class="card-body">
+                    <p>普通白色正文文本，支持换行、空格。</p>
+                    <p class="text-red">红色提示文字 · 警告内容</p>
+                    <p class="text-green">绿色文字 · 成功提示</p>
+                    <p class="text-blue">蓝色文字 · 信息提示</p>
+                    <p class="text-yellow">黄色文字 · 注意提醒</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">按钮控件合集（全部自带波纹动效）</div>
+                <div class="card-body">
+                    <button class="action-btn ripple-wrap tip-item" data-tip="普通灰色按钮，波纹动效">标准按钮</button>
+                    <button class="action-btn ripple-wrap tip-item" style="background:#16a34a" data-tip="绿色功能按钮">确认按钮</button>
+                    <button class="action-btn ripple-wrap tip-item" style="background:#dc2626" data-tip="红色危险按钮">删除按钮</button>
+                    <button class="img-btn-noborder ripple-wrap tip-item" data-tip="无边框图片按钮，自定义图标">🖼 图片按钮</button>
+                </div>
+            </div>
+
+            <div class="banner-bar">第二种提示样式，用于通知、警告提示</div>
+
+            <div class="card">
+                <div class="card-header">图片组件演示</div>
+                <div class="card-body">
+                    <p>图片通过URL加载，加载前请求用户授权联网</p>
+                    <div style="width:120px;height:80px;background:#374151;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#9ca3af;">外部图片占位区域</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">更多布局演示卡片</div>
+                <div class="card-body">
+                    <p>所有卡片都支持点击标题折叠/展开</p>
+                    <p>全部交互事件统一打包消息发给后端，禁止自定义JS代码</p>
+                </div>
+            </div>
+
+            <div class="banner-bar">提示：未检测到自定义主页文件，当前展示内置全套实验控件演示界面</div>
+        </div>
+    </div>
+</div>
+
+<!-- 右下角悬浮按钮容器 -->
+<div class="float-btn-container" id="floatBtnBox"></div>
+
+<script>
+    // 全局跟随鼠标Tooltip
+    const tooltipDom = document.getElementById("globalTooltip");
+    document.addEventListener("mousemove",(e)=>{
+        if(tooltipDom.style.display === "block"){
+            tooltipDom.style.left = (e.pageX + 12) + "px";
+            tooltipDom.style.top = (e.pageY + 12) + "px";
+        }
+    })
+
+    function bindTipItem(){
+        document.querySelectorAll(".tip-item").forEach(el=>{
+            el.addEventListener("mouseenter",()=>{
+                const text = el.getAttribute("data-tip");
+                tooltipDom.innerText = text;
+                tooltipDom.style.display = "block";
+            })
+            el.addEventListener("mouseleave",()=>{
+                tooltipDom.style.display = "none";
+            })
+        })
+    }
+    bindTipItem();
+
+    // 波纹效果通用函数
+    function createRipple(event) {
+        const btn = event.currentTarget;
+        const rect = btn.getBoundingClientRect();
+        const ripple = document.createElement("span");
+        ripple.className = "ripple";
+        const size = Math.max(rect.width, rect.height);
+        ripple.style.width = ripple.style.height = size + "px";
+        ripple.style.left = event.clientX - rect.left - size / 2 + "px";
+        ripple.style.top = event.clientY - rect.top - size / 2 + "px";
+        btn.appendChild(ripple);
+        ripple.addEventListener("animationend", ()=>ripple.remove());
+    }
+
+    // 卡片折叠逻辑
+    document.querySelectorAll(".card-header").forEach(header=>{
+        header.onclick = ()=>{
+            const body = header.nextElementSibling;
+            body.style.display = body.style.display === "none" ? "flex" : "none";
+        }
+    })
+
+    // 悬浮按钮容器
+    const floatBox = document.getElementById("floatBtnBox");
+    // 悬浮按钮缓存，id映射dom
+    const floatBtnMap = new Map();
+    const MAX_FLOAT_HEIGHT = 636 - 32; // 窗口可视高度阈值
+
+    // 标记：实验演示页显示状态
+    let demoVisible = true;
+    const demoDom = document.getElementById("experimentalDemo");
+    const container = document.getElementById("puiContainer");
+
+    // ========== 对外暴露全部JS API（Python调用入口） ==========
+    const LauncherApi = {
+        setAvatar(url) {
+            document.getElementById("avatar").style.backgroundImage = `url(${url})`;
+            document.getElementById("avatar").style.backgroundSize = "cover";
+        },
+
+        loadPuiContent(xmlText) {
+            if(!xmlText || xmlText.trim() === ""){
+                demoDom.classList.remove("demo-hide");
+                demoVisible = true;
+                container.innerHTML = "";
+                container.appendChild(demoDom);
+                bindTipItem();
+                return;
+            }
+            demoDom.classList.add("demo-hide");
+            demoVisible = false;
+            container.innerHTML = xmlText;
+            bindTipItem();
+        },
+
+        hideExperimentalDemo() {
+            demoDom.classList.add("demo-hide");
+            demoVisible = false;
+        },
+
+        clearPanel() {
+            container.innerHTML = "";
+        },
+
+        // ---------------- 右下角悬浮按钮接口 ----------------
+        /**
+         * 添加悬浮圆形按钮
+         * @param {string} btnId 唯一标识
+         * @param {string} text 按钮显示文字/图标
+         * @param {string} tip 悬浮tooltip
+         * @param {string} color 背景色，可选
+         */
+        addFloatButton(btnId, text, tip, color="#2563eb"){
+            if(floatBtnMap.has(btnId)){
+                console.log(`悬浮按钮 ${btnId} 已存在`);
+                return;
+            }
+            // 溢出检测
+            const currentHeight = floatBox.offsetHeight;
+            if(currentHeight + 54 > MAX_FLOAT_HEIGHT){
+                console.warn(`【溢出拦截】悬浮按钮${btnId}超出可视高度，创建作废`);
+                return;
+            }
+            const btn = document.createElement("button");
+            btn.className = "float-btn ripple-wrap tip-item";
+            btn.innerText = text;
+            btn.style.background = color;
+            btn.setAttribute("data-tip", tip);
+            btn.dataset.btnid = btnId;
+
+            btn.onclick = function(e){
+                createRipple(e);
+                if(window.qtBridge && typeof window.qtBridge.onFloatButtonClick === "function"){
+                    window.qtBridge.onFloatButtonClick(btnId);
+                }
+            };
+            // 悬浮提示绑定
+            btn.addEventListener("mouseenter",()=>{
+                tooltipDom.innerText = tip;
+                tooltipDom.style.display = "block";
+            });
+            btn.addEventListener("mouseleave",()=>{
+                tooltipDom.style.display = "none";
+            });
+
+            floatBox.appendChild(btn);
+            floatBtnMap.set(btnId, btn);
+        },
+
+        removeFloatButton(btnId){
+            if(!floatBtnMap.has(btnId)) return;
+            const dom = floatBtnMap.get(btnId);
+            dom.remove();
+            floatBtnMap.delete(btnId);
+        },
+
+        clearAllFloatButtons(){
+            floatBox.innerHTML = "";
+            floatBtnMap.clear();
+        }
+    };
+
+    // ========== 绑定左侧原生按钮波纹 + Qt桥事件 ==========
+    document.getElementById("startGameBtn").onclick = function(e){
+        createRipple(e);
+        if(window.qtBridge) window.qtBridge.onStartGame();
+    }
+    document.getElementById("btnSelectVer").onclick = function(e){
+        createRipple(e);
+        if(window.qtBridge) window.qtBridge.onSelectVersion();
+    }
+    document.getElementById("btnSetting").onclick = function(e){
+        createRipple(e);
+        if(window.qtBridge) window.qtBridge.onOpenGameSetting();
+    }
+
+    const avatar = document.getElementById("avatar");
+    let clickTimer = null;
+    avatar.onclick = function(e) {
+        createRipple(e);
+        clickTimer = setTimeout(()=>{
+            if(window.qtBridge) window.qtBridge.onAvatarClick();
+        },200);
+    }
+    avatar.ondblclick = function(e) {
+        e.preventDefault();
+        clearTimeout(clickTimer);
+        if(window.qtBridge) window.qtBridge.onAvatarDblClick();
+    }
+    avatar.oncontextmenu = function(e) {
+        e.preventDefault();
+        createRipple(e);
+        if(window.qtBridge) window.qtBridge.onAvatarRightClick();
+    }
+</script>
+
+<script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+<script>
+    new QWebChannel(qt.webChannelTransport, function(channel) {
+        window.qtBridge = channel.objects.qtBridge;
+    });
+</script>
+</body>
+</html>
