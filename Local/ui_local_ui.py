@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'local_uiGvTtHw.ui'
+## Form generated from reading UI file 'local_uiHpNcfL.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.10.2
 ##
@@ -40,6 +40,7 @@ class Ui_MainWindow(object):
         self.Main_ZhangHao_Input = QLineEdit(self.page)
         self.Main_ZhangHao_Input.setObjectName(u"Main_ZhangHao_Input")
         self.Main_ZhangHao_Input.setGeometry(QRect(120, 170, 221, 41))
+        self.Main_ZhangHao_Input.setCursor(QCursor(Qt.CursorShape.ArrowCursor))
         self.Main_ZhangHaoText = QLabel(self.page)
         self.Main_ZhangHaoText.setObjectName(u"Main_ZhangHaoText")
         self.Main_ZhangHaoText.setGeometry(QRect(50, 170, 53, 15))
@@ -49,31 +50,32 @@ class Ui_MainWindow(object):
         self.Main_PassWord_Input = QLineEdit(self.page)
         self.Main_PassWord_Input.setObjectName(u"Main_PassWord_Input")
         self.Main_PassWord_Input.setGeometry(QRect(120, 250, 221, 41))
+        self.Main_PassWord_Input.setCursor(QCursor(Qt.CursorShape.ArrowCursor))
         self.Main_PassWord_Input.setEchoMode(QLineEdit.EchoMode.Password)
         self.Main_Login_Button = QPushButton(self.page)
         self.Main_Login_Button.setObjectName(u"Main_Login_Button")
         self.Main_Login_Button.setGeometry(QRect(50, 360, 221, 71))
-        self.Main_Login_Button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.Main_Login_Button.setCursor(QCursor(Qt.CursorShape.ArrowCursor))
         self.Main_instct_Button = QPushButton(self.page)
         self.Main_instct_Button.setObjectName(u"Main_instct_Button")
         self.Main_instct_Button.setGeometry(QRect(50, 460, 75, 23))
-        self.Main_instct_Button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.Main_instct_Button.setCursor(QCursor(Qt.CursorShape.ArrowCursor))
         self.Main_Lost_Password = QPushButton(self.page)
         self.Main_Lost_Password.setObjectName(u"Main_Lost_Password")
         self.Main_Lost_Password.setGeometry(QRect(200, 460, 75, 23))
-        self.Main_Lost_Password.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.Main_Lost_Password.setCursor(QCursor(Qt.CursorShape.ArrowCursor))
         self.Main_OffLine_Run = QPushButton(self.page)
         self.Main_OffLine_Run.setObjectName(u"Main_OffLine_Run")
         self.Main_OffLine_Run.setGeometry(QRect(460, 160, 331, 81))
-        self.Main_OffLine_Run.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.Main_OffLine_Run.setCursor(QCursor(Qt.CursorShape.ArrowCursor))
         self.Main_Exit_Button = QPushButton(self.page)
         self.Main_Exit_Button.setObjectName(u"Main_Exit_Button")
         self.Main_Exit_Button.setGeometry(QRect(734, 552, 101, 41))
-        self.Main_Exit_Button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.Main_Exit_Button.setCursor(QCursor(Qt.CursorShape.ArrowCursor))
         self.remember = QCheckBox(self.page)
         self.remember.setObjectName(u"remember")
         self.remember.setGeometry(QRect(710, 250, 80, 19))
-        self.remember.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.remember.setCursor(QCursor(Qt.CursorShape.ArrowCursor))
         self.stackedWidget.addWidget(self.page)
         self.page_2 = QWidget()
         self.page_2.setObjectName(u"page_2")

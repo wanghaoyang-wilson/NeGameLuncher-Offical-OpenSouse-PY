@@ -1,106 +1,131 @@
 /* 全局背景兜底 */
+QWidget {
+    background-color: #121826;
+    color: #e2e8f0;
+}
+
+/* 主窗口中心容器 */
+QWidget#centralwidget {
+    background-color: #121826;
+}
+
+/* StackedWidget 页面容器 */
 QStackedWidget {
-    background-color: #121826 !important;
+    background-color: #121826;
+    border: none;
 }
+
 QWidget#page {
+    background-color: #121826;
+}
+
+/* TabWidget 核心修复 */
+QTabWidget::pane {
+    border: none;
+    background-color: #121826;
+}
+
+QTabWidget::tab-bar {
+    left: 0;
+    top: 0;
+}
+
+QTabBar::tab {
+    background-color: #1e293b;
+    color: #94a3b8;
+    padding: 6px 12px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+
+QTabBar::tab:selected {
+    background-color: #2563eb;
+    color: white;
+}
+
+QTabBar::tab:hover:!selected {
+    background-color: #334155;
+}
+
+/* WebEngine 关键修复 */
+QWebEngineView {
     background-color: #121826 !important;
+    border: none;
 }
 
-QLabel {
-    color: #94a3b8 !important;
-    font-size: 13px !important;
-}
-
-QLabel#Main_Title {
-    font-size: 24px !important;
-    font-weight: 600 !important;
-    letter-spacing: 3px !important;
-    color: #cbd5e1 !important;
-    padding: 12px 24px !important;
-    border: 1px solid rgba(96, 165, 250, 0.18) !important;
-    border-radius: 10px !important;
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-        stop:0 rgba(40, 52, 70, 0.4),
-        stop:1 rgba(22, 28, 40, 0.4)) !important;
-    box-shadow:
-        0 0 14px rgba(96, 165, 250, 0.15),
-        inset 0 0 12px rgba(96, 165, 250, 0.06) !important;
-}
-
+/* 输入框 */
 QLineEdit#Main_ZhangHao_Input,
 QLineEdit#Main_PassWord_Input {
-    background-color: #1e293b !important;
-    border: 1px solid rgba(71, 85, 105, 0.4) !important;
-    border-radius: 7px !important;
-    padding: 9px 12px !important;
-    color: #e2e8f0 !important;
-    font-size: 14px !important;
+    background-color: #1e293b;
+    border: 1px solid rgba(71, 85, 105, 0.4);
+    border-radius: 7px;
+    padding: 9px 12px;
+    color: #e2e8f0;
+    font-size: 14px;
 }
+
 QLineEdit#Main_ZhangHao_Input:focus,
 QLineEdit#Main_PassWord_Input:focus {
-    border-color: #3b82f6 !important;
+    border-color: #3b82f6;
 }
 
+/* 登录按钮 */
 QPushButton#Main_Login_Button {
-    background-color: #1d4ed8 !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 8px !important;
-    font-size: 15px !important;
-    font-weight: 500 !important;
+    background-color: #1d4ed8;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
 }
+
 QPushButton#Main_Login_Button:hover {
-    background-color: #2563eb !important;
+    background-color: #2563eb;
 }
+
 QPushButton#Main_Login_Button:pressed {
-    background-color: #1e40af !important;
+    background-color: #1e40af;
 }
 
-QPushButton#Main_instct_Button,
-QPushButton#Main_Lost_Password {
-    background: transparent !important;
-    color: #94a3b8 !important;
-    border: none !important;
-    font-size: 12px !important;
-}
-QPushButton#Main_instct_Button:hover,
-QPushButton#Main_Lost_Password:hover {
-    color: #60a5fa !important;
-    text-decoration: underline !important;
-}
-
+/* 离线运行 */
 QPushButton#Main_OffLine_Run {
-    background-color: #1a2233 !important;
-    color: #cbd5e1 !important;
-    border: 1px solid rgba(100, 116, 139, 0.35) !important;
-    border-radius: 8px !important;
-    font-size: 14px !important;
+    background-color: #1a2233;
+    color: #cbd5e1;
+    border: 1px solid rgba(100, 116, 139, 0.35);
+    border-radius: 8px;
+    font-size: 14px;
 }
+
 QPushButton#Main_OffLine_Run:hover {
-    background-color: #232f44 !important;
+    background-color: #232f44;
 }
 
+/* 退出按钮 */
 QPushButton#Main_Exit_Button {
-    background-color: #27272a !important;
-    color: #a1a1aa !important;
-    border: none !important;
-    border-radius: 6px !important;
-}
-QPushButton#Main_Exit_Button:hover {
-    background-color: #3f3f46 !important;
+    background-color: #27272a;
+    color: #a1a1aa;
+    border: none;
+    border-radius: 6px;
 }
 
+QPushButton#Main_Exit_Button:hover {
+    background-color: #3f3f46;
+}
+
+/* 复选框 */
 QCheckBox#remember {
-    color: #94a3b8 !important;
+    color: #94a3b8;
 }
+
 QCheckBox#remember::indicator {
-    width: 15px !important;
-    height: 15px !important;
-    border-radius: 4px !important;
-    border: 1px solid #475569 !important;
-    background-color: #1e293b !important;
+    width: 15px;
+    height: 15px;
+    border-radius: 4px;
+    border: 1px solid #475569;
+    background-color: #1e293b;
 }
+
 QCheckBox#remember::indicator:checked {
-    background-color: #2563eb !important;
-    border-color: #3b82f6 !important;
+    background-color: #2563eb;
+    border-color: #3b82f6;
 }

@@ -49,6 +49,9 @@
         <height>41</height>
        </rect>
       </property>
+      <property name="cursor">
+       <cursorShape>ArrowCursor</cursorShape>
+      </property>
      </widget>
      <widget class="QLabel" name="Main_ZhangHaoText">
       <property name="geometry">
@@ -85,6 +88,9 @@
         <height>41</height>
        </rect>
       </property>
+      <property name="cursor">
+       <cursorShape>ArrowCursor</cursorShape>
+      </property>
       <property name="text">
        <string/>
       </property>
@@ -102,7 +108,7 @@
        </rect>
       </property>
       <property name="cursor">
-       <cursorShape>PointingHandCursor</cursorShape>
+       <cursorShape>ArrowCursor</cursorShape>
       </property>
       <property name="text">
        <string>登录</string>
@@ -118,7 +124,7 @@
        </rect>
       </property>
       <property name="cursor">
-       <cursorShape>PointingHandCursor</cursorShape>
+       <cursorShape>ArrowCursor</cursorShape>
       </property>
       <property name="text">
        <string>注册</string>
@@ -134,7 +140,7 @@
        </rect>
       </property>
       <property name="cursor">
-       <cursorShape>PointingHandCursor</cursorShape>
+       <cursorShape>ArrowCursor</cursorShape>
       </property>
       <property name="text">
        <string>忘记密码</string>
@@ -150,7 +156,7 @@
        </rect>
       </property>
       <property name="cursor">
-       <cursorShape>PointingHandCursor</cursorShape>
+       <cursorShape>ArrowCursor</cursorShape>
       </property>
       <property name="text">
        <string>离线运行</string>
@@ -166,7 +172,7 @@
        </rect>
       </property>
       <property name="cursor">
-       <cursorShape>PointingHandCursor</cursorShape>
+       <cursorShape>ArrowCursor</cursorShape>
       </property>
       <property name="text">
        <string>退出</string>
@@ -182,7 +188,7 @@
        </rect>
       </property>
       <property name="cursor">
-       <cursorShape>PointingHandCursor</cursorShape>
+       <cursorShape>ArrowCursor</cursorShape>
       </property>
       <property name="text">
        <string>记住</string>
