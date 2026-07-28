@@ -15,3 +15,26 @@
 [2026:07:19:01:18:44:621] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI core PWD is make " "
 [2026:07:19:01:18:47:929] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI Core Set Page to 2 page
 [2026:07:19:01:18:47:929] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI Core Set Page to 2 page
+[2026:07:28:07:59:43:253] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI core is init
+[2026:07:28:07:59:44:399] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI core is setup
+[2026:07:28:07:59:44:403] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI core is set ico finish
+[2026:07:28:07:59:44:403] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI core is set window title
+[2026:07:28:07:59:44:403] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI Core Set Page to 1 page
+[2026:07:28:07:59:44:403] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI core load ui config
+[2026:07:28:07:59:44:404] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI core is instaed button event
+[2026:07:28:07:59:44:405] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI core is read md file
+[2026:07:28:07:59:44:405] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI core is set md text
+[2026:07:28:07:59:44:408] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI core is set tab name
+[2026:07:28:07:59:44:408] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI core is set tab page
+[2026:07:28:07:59:44:408] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI core is set style
+[2026:07:28:07:59:44:411] [INFO] [NL.Common.CORE] [NL.Common.Core.Game.GameProcessManger] [None] : Core is build js
+[2026:07:28:07:59:44:411] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI core is HTML create js contenw JS id H_ 
+[2026:07:28:07:59:44:412] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI core is read run.html html
+[2026:07:28:07:59:48:429] [INFO] [NL.Frontend.UImodel] [Nl.Frontend.UImodel.UI] [None] : UI Core Set Page to 2 page
+[2026:07:28:07:59:53:172] [INFO] [NL.Common.CORE] [NL.Common.Core.Game.GameProcessManger] [None] : Core is run game
+[2026:07:28:08:00:10:774] [INFO] [NL.Common.CORE] [NL.Common.Core.Game.GameProcessManger] [None] : Core is close game
+[2026:07:28:08:00:11:216] [INFO] [NL.AllModel] [all] [None] : UI core is run change game
+[2026:07:28:08:00:11:769] [INFO] [NL.AllModel] [all] [None] : UI core is run game setting
+[2026:07:28:08:00:12:238] [INFO] [NL.AllModel] [all] [None] : UI core is run player setting
+[2026:07:28:08:00:12:695] [INFO] [NL.AllModel] [all] [None] : UI core is run users info
+[2026:07:28:08:00:13:304] [INFO] [NL.Common.CORE] [NL.Common.Core.Game.GameProcessManger] [None] : Core is run off line
