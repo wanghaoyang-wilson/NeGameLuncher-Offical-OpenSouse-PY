@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NE Launcher</title>
+<script src="qrc:///qtwebchannel/qwebchannel.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{
@@ -27,8 +28,9 @@ body{
     flex-direction:column;
     align-items:center;
     height:100%;
+    opacity:1 !important;
+    transform:scale(1) !important;
 }
-/* 顶部椭圆胶囊按钮 */
 .top-login-bar{
     width:100%;
     display:flex;
@@ -41,331 +43,358 @@ body{
     border:none;
     position:relative;
     overflow:hidden;
-    transition:transform 0.12s ease, background 0.12s ease;
+    transition:transform 0.12s ease;
 }
-.offline-btn{
-    background:#2563eb;
-    color:#fff;
-}
-.login-btn-disabled{
-    background:#1a1f2b;
-    color:#818896;
-}
-.login-btn:hover{
-    transform:scale(1.03);
-}
-.login-btn:active{
-    transform:scale(0.96);
-}
-/* 头像容器，支持点击光影 */
+.offline-btn{background:#2563eb;color:#fff;}
+.login-btn-disabled{background:#1a1f2b;color:#818896;}
+.login-btn:hover{transform:scale(1.03);}
+.login-btn:active{transform:scale(0.96);}
 .avatar{
-    width:96px;
-    height:96px;
-    border-radius:8px;
-    background:#252c3a;
-    margin-top:24px;
-    position:relative;
-    overflow:hidden;
-    cursor:pointer;
+    width:96px;height:96px;border-radius:8px;background:#252c3a;margin-top:24px;
+    position:relative;overflow:hidden;cursor:pointer;
 }
-/* ID容器：文字与输入框完美重合对齐 */
 .player-id-wrap{
-    margin-top:12px;
-    width:100%;
-    text-align:center;
-    position:relative;
-    height:20px;
+    margin-top:12px;width:100%;text-align:center;height:20px;position:relative;
 }
-.player-id-text{
-    font-size:14px;
-    color:#94a3b8;
-    line-height:20px;
-}
+.player-id-text{font-size:14px;color:#94a3b8;line-height:20px;}
 .player-id-input{
-    position:absolute;
-    left:50%;
-    top:0;
-    transform:translateX(-50%);
-    width:90%;
-    height:20px;
-    font-size:14px;
-    line-height:20px;
-    background:#1f2937;
-    border:1px solid #3b4454;
-    color:#e4e7ed;
-    border-radius:4px;
-    padding:0 6px;
-    display:none;
-    outline:none;
-    text-align:center;
+    position:absolute;left:50%;top:0;transform:translateX(-50%);width:90%;height:20px;
+    background:#1f2937;border:1px solid #3b4454;color:#e4e7ed;border-radius:4px;
+    padding:0 6px;display:none;outline:none;text-align:center;font-size:14;
 }
-.spacer{
-    flex:1;
-    width:100%;
-}
-/* 底部按钮组 */
+.spacer{flex:1;width:100%;}
 .bottom-action-group{
-    width:100%;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
+    width:100%;display:flex;flex-direction:column;gap:10px;
 }
-.launch-btn{
-    width:100%;
-    padding:18px 0;
-    background:#1d4ed8;
-    border:none;
-    border-radius:8px;
-    color:#fff;
-    position:relative;
-    overflow:hidden;
-    transition:transform 0.12s ease, background 0.12s ease;
+/* 主切换按钮 + 悬浮Tooltip */
+#mainBtn{
+    width:100%;padding:18px 0;background:#1d4ed8;border:none;border-radius:8px;
+    color:#fff;position:relative;overflow:hidden;transition:transform 0.12s ease;
+    transform:scale(1) !important;
 }
-.launch-btn:hover{
-    transform:scale(1.03);
+#mainBtn:hover{transform:scale(1.03) !important;}
+#mainBtn:active{transform:scale(0.96) !important;}
+#mainBtn::after{
+    content:attr(data-tip);position:absolute;bottom:110%;left:50%;
+    transform:translateX(-50%);background:#0f131a;color:#fff;
+    padding:6px 10px;border-radius:4px;font-size:12px;white-space:nowrap;
+    opacity:0;pointer-events:none;transition:opacity 0.2s ease;z-index:99;
 }
-.launch-btn:active{
-    transform:scale(0.96);
-}
-.launch-title{
-    font-size:22px;
-    font-weight:bold;
-    position:relative;
-    z-index:2;
-}
-.launch-subtitle{
-    font-size:13px;
-    opacity:0.75;
-    margin-top:4px;
-    position:relative;
-    z-index:2;
-}
+#mainBtn:hover::after{opacity:1;}
+.launch-title{font-size:22px;font-weight:bold;position:relative;z-index:2;}
+.launch-subtitle{font-size:13px;opacity:0.75;margin-top:4px;position:relative;z-index:2;}
 .vert-btn{
-    width:100%;
-    padding:12px 0;
-    background:#1f2937;
-    border:1px solid #374151;
-    border-radius:6px;
-    color:#e4e7ed;
-    position:relative;
-    overflow:hidden;
-    transition:transform 0.12s ease, background 0.12s ease;
+    width:100%;padding:12px 0;background:#1f2937;border:1px solid #374151;
+    border-radius:6px;color:#e4e7ed;position:relative;overflow:hidden;
+    transition:transform 0.12s ease;
 }
-.vert-btn:hover{
-    transform:scale(1.03);
-}
-.vert-btn:active{
-    transform:scale(0.96);
-}
+.vert-btn:hover{transform:scale(1.03);}
+.vert-btn:active{transform:scale(0.96);}
 .right-light{
-    flex:1;
-    padding:30px;
-    background:#1e2430;
+    flex:1;padding:30px;background:#1e2430;position:relative;
 }
-*{
-    cursor: auto !important;
+*{cursor:auto !important;}
+/* 左上角加载旋转圈 */
+.load-avatar-loader{
+    width:40px;height:40px;position:absolute;left:30px;top:24px;
+    transform:scale(0);opacity:0;pointer-events:none;
+}
+.load-spinner{
+    width:40px;height:40px;border:3px solid rgba(255,255,255,0.15);
+    border-top-color:#4299ff;border-radius:50%;animation:spin 0.8s linear infinite;
+}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+/* 日志硬件面板 */
+#logPanelWrap{
+    position:absolute;right:24px;top:80px;width:280px;
+    transform:scale(0);opacity:0;pointer-events:none;
+}
+.log-content{
+    background:rgba(255,255,255,0.06);padding:12px;border-radius:8px 8px 0 0;
+    font-size:12px;min-height:140px;max-height:220px;overflow-y:auto;
+}
+.stat-content{
+    background:rgba(255,255,0.04);padding:10px 12px;border-radius:0 0 8px;font-size:12px;
+}
+/* 【新增】自定义HTML预留容器，可由Python注入内容 */
+#customHtmlBox{
+    position:absolute;left:20px;top:80px;width:260px;height:320px;
+    border:1px solid rgba(255,255,255,0.1);border-radius:8px;
+    overflow:auto;padding:8px;font-size:12px;color:#e4e7ed;
+}
+/* 底部调试区（窗口571高度以外，运行不可见） */
+.debug-test-box{
+    position:absolute;left:10px;top:600px;width:700px;padding:12px;
+    background:#0f131a;border:1px solid #334155;border-radius:6px;
+}
+.debug-test-box button{
+    padding:6px 12px;margin:0 4px;background:#2563eb;border:none;color:#fff;border-radius:4;
 }
 </style>
 </head>
 <body>
 <div class="wrapper">
-    <div class="left-dark">
+    <div class="left-dark" id="leftPanel">
         <div class="top-login-bar">
             <button class="login-btn offline-btn" id="btnOffline">离线</button>
             <button class="login-btn login-btn-disabled" id="btnLogin">登录</button>
         </div>
-
         <div class="avatar" id="avatarBox"></div>
-
         <div class="player-id-wrap" id="idWrap">
             <div class="player-id-text" id="idText">Player_ID_001</div>
             <input type="text" class="player-id-input" id="idInput" maxlength="24">
         </div>
-
         <div class="spacer"></div>
-
         <div class="bottom-action-group">
-            <button class="launch-btn" id="btnLaunch">
-                <div class="launch-title">启动游戏</div>
+            <!-- 单状态切换按钮，带tooltip -->
+            <button id="mainBtn" data-tip="点击启动游戏，加载中可点击关闭进程">
+                <div class="launch-title" id="mainBtnText">启动游戏</div>
                 <div class="launch-subtitle" id="subTitle">副标题预留（对接API）</div>
             </button>
             <button class="vert-btn" id="btnVersion">选择版本</button>
             <button class="vert-btn" id="btnSetting">游戏设置</button>
         </div>
     </div>
-
     <div class="right-light">
+        <!-- 自定义HTML预留容器 -->
+        <div id="customHtmlBox">[自定义HTML区域，等待Python注入内容]</div>
+
+        <div class="load-avatar-loader" id="loadSpinnerWrap">
+            <div class="load-spinner"></div>
+        </div>
+        <div id="logPanelWrap">
+            <div class="log-content" id="logText">[系统] 准备就绪</div>
+            <div class="stat-content" id="hardwareStat">CPU：0%<br>GPU：0%</div>
+        </div>
+
+        <!-- 调试区 -->
+        <div class="debug-test-box">
+            <span>调试：</span>
+            <button id="testFinish">模拟游戏启动完成(Python)</button>
+            <button id="testReset">强制收起日志加载面板</button>
+            <button id="testCustomHtml">测试注入HTML</button>
+        </div>
     </div>
 </div>
-
 <script>
 const BASE_DURATION = 400;
-
-// 通用波纹生成函数，支持自定义透明度（头像用浅色）
-function createRipple(target, e, opacity = 0.22, glowOpacity = 0.35) {
+let isLoading = false;
+let animRunning = false; // 动画锁，防止重复点击错乱
+let bridge = null;
+new QWebChannel(qt.webChannelTransport, function (channel) {
+    bridge = channel.objects.bridge;
+    console.log("ok",bridge)
+});
+console.log("abcd")
+// 波纹点击光效
+function createRipple(target,e,opacity=0.22,glowOpacity=0.35){
     const rect = target.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    const width = target.offsetWidth;
     let dur = BASE_DURATION;
-    if(width < 200) dur = BASE_DURATION * 0.75;
-
-    // 水波纹
     const ripple = document.createElement('span');
-    ripple.style.cssText = `
-        position:absolute;left:${x}px;top:${y}px;width:0;height:0;
-        background:rgba(255,255,255,${opacity});border-radius:50%;
-        transform:translate(-50%,-50%);transition:width ${dur}ms ease-out,height ${dur}ms ease-out,opacity ${dur}ms ease-out;
-        z-index:999;opacity:1;
-    `;
+    ripple.style.cssText = `position:absolute;left:${x}px;top:${y}px;width:0;height:0;
+    background:rgba(255,255,255,${opacity});border-radius:50%;transform:translate(-50%,-50%);
+    transition:width ${dur}ms ease-out,height ${dur}ms ease-out,opacity ${dur}ms ease-out;
+    z-index:999;opacity:1;pointer-events:none;`;
     target.appendChild(ripple);
-
-    // 漫射柔光
     const glow = document.createElement('span');
-    glow.style.cssText = `
-        position:absolute;left:${x}px;top:${y}px;width:0;height:0;
-        background:radial-gradient(circle, rgba(120,170,255,${glowOpacity}) 0%, transparent 70%);
-        border-radius:50%;transform:translate(-50%,-50%);
-        transition:width ${dur}ms ease-out,height ${dur}ms ease-out,opacity ${dur}ms ease-out;
-        z-index:998;opacity:1;
-    `;
+    glow.style.cssText = `position:absolute;left:${x}px;top:${y}px;width:0;height:0;
+    background:radial-gradient(circle,rgba(120,170,255,${glowOpacity}) 0%,transparent 70%);
+    border-radius:50%;transform:translate(-50%,-50%);
+    transition:width ${dur}ms ease-out,height ${dur}ms ease-out,opacity ${dur}ms ease-out;
+    z-index:998;opacity:1;pointer-events:none;`;
     target.appendChild(glow);
-
     requestAnimationFrame(()=>{
-        ripple.style.width = '320px';
-        ripple.style.height = '320px';
-        ripple.style.opacity = '0';
-        glow.style.width = '420px';
-        glow.style.height = '420px';
-        glow.style.opacity = '0';
+        ripple.style.width = '320px';ripple.style.height = '320px';ripple.style.opacity = '0';
+        glow.style.width = '420px';glow.style.height = '420px';glow.style.opacity = '0';
     });
+    setTimeout(()=>ripple.remove(),dur);
+    setTimeout(()=>glow.remove(),dur);
+}
+// 弹性缩放工具
+function easeOutBack(t){
+    const c1=1.70158,c3=c1+1;
+    return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2);
+}
+function animateScale(el,from,to,dur,cb){
+    let start=null;
+    function step(ts){
+        if(!start) start=ts;
+        const p=(ts-start)/dur;
+        if(p>=1){el.style.transform=`scale(${to})`;cb&&cb();return;}
+        const v=from+(to-from)*easeOutBack(p);
+        el.style.transform=`scale(${v})`;
+        requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+}
+function popIn(el,delay,cb){
     setTimeout(()=>{
-        ripple.remove();
-        glow.remove();
-    }, dur);
+        el.style.opacity='1';el.style.pointerEvents='auto';
+        animateScale(el,0,1.4,160,()=>animateScale(el,1.4,1,220,cb));
+    },delay);
 }
-
-// 按钮元素获取
-const btnLaunch = document.getElementById('btnLaunch');
-const btnVersion = document.getElementById('btnVersion');
-const btnSetting = document.getElementById('btnSetting');
-const btnOffline = document.getElementById('btnOffline');
-const btnLogin = document.getElementById('btnLogin');
-const avatar = document.getElementById('avatarBox');
-
-// 启动游戏
-btnLaunch.addEventListener('mousedown', e=>{
-    createRipple(btnLaunch,e);
-    if(window.qtWebChannel) qtWebChannel.onLaunchGame();
-    else console.log('QT_EVENT:onLaunchGame');
-})
-// 选择版本
-btnVersion.addEventListener('mousedown', e=>{
-    createRipple(btnVersion,e);
-    if(window.qtWebChannel) qtWebChannel.onSelectVersion();
-    else console.log('QT_EVENT:onSelectVersion');
-})
-// 游戏设置
-btnSetting.addEventListener('mousedown', e=>{
-    createRipple(btnSetting,e);
-    if(window.qtWebChannel) qtWebChannel.onOpenSetting();
-    else console.log('QT_EVENT:onOpenSetting');
-})
-// 离线按钮
-btnOffline.addEventListener('mousedown', e=>{
-    createRipple(btnOffline,e);
-    if(window.qtWebChannel) qtWebChannel.onOfflineMode();
-    else console.log('QT_EVENT:onOfflineMode');
-})
-// 登录按钮
-btnLogin.addEventListener('mousedown', e=>{
-    createRipple(btnLogin,e);
-    if(btnLogin.classList.contains('login-btn-disabled')){
-        e.preventDefault();
-        e.stopPropagation();
-        return;
-    }
-    if(window.qtWebChannel) qtWebChannel.onLoginClick();
-    else console.log('QT_EVENT:onLoginClick');
-})
-
-// 头像左键点击事件
-avatar.addEventListener('mousedown', e => {
-    createRipple(avatar, e, 0.12, 0.18);
-    if(e.button === 0){
-        if(window.qtWebChannel) qtWebChannel.onAvatarLeftClick();
-        else console.log('QT_EVENT:onAvatarLeftClick');
-    }
-})
-// 头像右键菜单
-avatar.addEventListener('contextmenu', e => {
-    e.preventDefault();
-    createRipple(avatar, e, 0.12, 0.18);
-    if(window.qtWebChannel) qtWebChannel.onAvatarRightClick();
-    else console.log('QT_EVENT:onAvatarRightClick');
-})
-
-// ID双击编辑逻辑
-const idWrap = document.getElementById('idWrap');
-const idText = document.getElementById('idText');
-const idInput = document.getElementById('idInput');
-let editMode = false;
-
-idWrap.addEventListener('dblclick', ()=>{
-    if(editMode) return;
-    editMode = true;
-    idText.style.display = 'none';
-    idInput.style.display = 'block';
-    idInput.value = idText.innerText;
-    idInput.focus();
-    requestAnimationFrame(()=> idInput.select());
-})
-
-function submitNickname(){
-    if(!editMode) return;
-    const val = idInput.value.trim();
-    idText.innerText = val || idText.innerText;
-    idInput.style.display = 'none';
-    idText.style.display = 'block';
-    editMode = false;
-    if(window.qtWebChannel) qtWebChannel.onNicknameChanged(val);
-    else console.log('QT_EVENT:onNicknameChanged ->', val);
+function popOut(el,delay,cb){
+    setTimeout(()=>{
+        animateScale(el,1,1.3,150,()=>{
+            animateScale(el,1.3,0,200,()=>{
+                el.style.opacity='0';el.style.pointerEvents='none';cb&&cb();
+            });
+        })
+    },delay);
 }
-idInput.addEventListener('keydown', e=>{
-    if(e.key === 'Enter') submitNickname();
-    if(e.key === 'Escape'){
-        idInput.value = idText.innerText;
-        submitNickname();
-    }
-})
-idInput.addEventListener('blur', submitNickname);
-
-// ====================== 完整双向 WebChannel API ======================
-window.qtWebChannel = {
-    // ========= JS → QT（页面点击事件回调） =========
-    onLaunchGame(){},         // 启动游戏按钮
-    onSelectVersion(){},      // 选择版本按钮
-    onOpenSetting(){},        // 游戏设置按钮
-    onOfflineMode(){},        // 离线模式按钮
-    onLoginClick(){},         // 登录按钮
-    onAvatarLeftClick(){},    // 头像左键单击
-    onAvatarRightClick(){},   // 头像右键菜单
-    onNicknameChanged(name){},// 修改昵称提交
-
-    // ========= QT → JS（前端状态控制接口） =========
-    setPlayerName(name){
-        idText.innerText = name;
-    },
-    setSubTitle(text){
-        document.getElementById('subTitle').innerText = text;
-    },
-    setLoginState(enableLogin){
-        if(enableLogin){
-            btnLogin.classList.remove('login-btn-disabled');
-        }else{
-            btnLogin.classList.add('login-btn-disabled');
+// 日志、硬件更新
+function appendLog(text){
+    const logBox=document.getElementById("logText");
+    logBox.innerHTML+=`<br>${text}`;
+    logBox.scrollTop=logBox.scrollHeight;
+}
+function updateHardwareStat(cpu,gpu){
+    document.getElementById("hardwareStat").innerHTML=`CPU：${cpu}%<br>GPU：${gpu}%`;
+}
+// 【新增】Python调用：往预留容器写入自定义HTML
+function setCustomHtml(htmlStr){
+    document.getElementById("customHtmlBox").innerHTML = htmlStr;
+}
+// 收起所有加载面板，全部动画结束后切换按钮状态
+function hideAllLoadUI(finishCb){
+    if(animRunning) return;
+    animRunning = true;
+    let done=0,total=2;
+    function check(){
+        done++;
+        if(done>=total){
+            animRunning = false;
+            isLoading = false;
+            // 动画全部走完再切换文字，彻底修复卡住不恢复问题
+            document.getElementById('mainBtnText').innerText='启动游戏';
+            document.getElementById('mainBtn').dataset.tip='点击启动游戏，加载中可点击关闭进程';
+            finishCb&&finishCb();
         }
     }
+    popOut(loadSpinnerWrap,0,check);
+    popOut(logPanelWrap,80,check);
+}
+// Python接口：游戏启动完成
+function setLaunchFinish(){
+    appendLog('[系统] 游戏启动完成，收起加载面板');
+    hideAllLoadUI();
+}
+// DOM元素
+const mainBtn=document.getElementById('mainBtn');
+const mainBtnText=document.getElementById('mainBtnText');
+const btnVersion=document.getElementById('btnVersion');
+const btnSetting=document.getElementById('btnSetting');
+const btnOffline=document.getElementById('btnOffline');
+const btnLogin=document.getElementById('btnLogin');
+const avatar=document.getElementById('avatarBox');
+const loadSpinnerWrap=document.getElementById('loadSpinnerWrap');
+const logPanelWrap=document.getElementById('logPanelWrap');
+const testFinishBtn=document.getElementById('testFinish');
+const testResetBtn=document.getElementById('testReset');
+const testCustomHtml=document.getElementById('testCustomHtml');
+const customHtmlBox=document.getElementById('customHtmlBox');
+
+// 主按钮点击逻辑（加动画锁，防止重复触发）
+mainBtn.addEventListener('mousedown',e=>createRipple(mainBtn,e));
+mainBtn.addEventListener('click',()=>{
+    if(animRunning) return;
+    if(!isLoading){
+        // 进入加载状态
+        isLoading=true;
+        mainBtnText.innerText='关闭游戏';
+        mainBtn.dataset.tip='点击终止当前游戏加载进程';
+        popIn(loadSpinnerWrap,100);
+        popIn(logPanelWrap,280);
+        appendLog('[系统] 开始启动游戏...');
+        if(window.qtWebChannel) bridge.H_onLaunchGame();
+    }else{
+        // 退出加载，动画走完自动切回文字
+        appendLog('[系统] 手动取消游戏加载');
+        hideAllLoadUI(()=>{
+            if(window.qtWebChannel) bridge.H_onCloseGame();
+        });
+    }
+});
+// 侧边按钮
+btnVersion.addEventListener('mousedown',e=>createRipple(btnVersion,e));
+btnSetting.addEventListener('mousedown',e=>createRipple(btnSetting,e));
+btnOffline.addEventListener('mousedown',e=>createRipple(btnOffline,e));
+btnLogin.addEventListener('mousedown',e=>{
+    createRipple(btnLogin,e);
+    if(!btnLogin.classList.contains('login-btn-disabled')&&window.qtWebChannel) bridge.H_onLoginClick();
+});
+// 头像点击
+avatar.addEventListener('mousedown',e=>{
+    createRipple(avatar,e,0.12,0.18);
+    if(e.button===0&&window.qtWebChannel) qtWebChannel.H_onAvatarLeftClick();
+});
+avatar.addEventListener('contextmenu',e=>{
+    e.preventDefault();
+    createRipple(avatar,e,0.12,0.18);
+    if(window.qtWebChannel) bridge.H_onAvatarRightClick();
+});
+// ID双击修改昵称
+const idWrap=document.getElementById('idWrap');
+const idText=document.getElementById('idText');
+const idInput=document.getElementById('idInput');
+let editMode=false;
+idWrap.addEventListener('dblclick',()=>{
+    if(editMode) return;
+    editMode=true;
+    idText.style.display='none';
+    idInput.style.display='block';
+    idInput.value=idText.innerText;
+    idInput.focus();
+    requestAnimationFrame(()=>idInput.select());
+});
+function submitNickname(){
+    if(!editMode) return;
+    const val=idInput.value.trim();
+    idText.innerText=val||idText.innerText;
+    idInput.style.display='none';
+    idText.style.display='block';
+    editMode=false;
+    if(window.qtWebChannel) bridge.H_onNicknameChanged(val);
+}
+idInput.addEventListener('keydown',e=>{
+    if(e.key==='Enter') submitNickname();
+    if(e.key==='Escape'){idInput.value=idText.innerText;submitNickname();}
+});
+idInput.addEventListener('blur',submitNickname);
+// 调试按钮
+testFinishBtn.addEventListener('click',setLaunchFinish);
+testResetBtn.addEventListener('click',hideAllLoadUI);
+// 测试自定义HTML注入
+testCustomHtml.addEventListener('click',()=>{
+    setCustomHtml(`<h3>自定义面板测试</h3><p>Python可以传入任意HTML</p><button style="padding:4px;background:#2563eb;color:#fff;border:none;border-radius:4px">测试按钮</button>`);
+});
+
+
+// QT双向通信完整接口（新增setCustomHtml）
+window.qtWebChannel={
+    // JS → Python 回调
+    /*onLaunchGame(){},
+    onSelectVersion(){},
+    onOpenSetting(){},
+    onOfflineMode(){},
+    onLoginClick(){},
+    onAvatarLeftClick(){},
+    onAvatarRightClick(){},
+    onNicknameChanged(name){},
+    onCloseGame(){},*/
+    // Python → JS 控制接口
+    setPlayerName(name){idText.innerText=name;},
+    setSubTitle(text){document.getElementById('subTitle').innerText=text;},
+    setLoginState(enable){
+        enable?btnLogin.classList.remove('login-btn-disabled'):btnLogin.classList.add('login-btn-disabled');
+    },
+    appendLog,
+    updateHardwareStat,
+    setLaunchFinish,
+    // 新增：注入自定义HTML到预留区域
+    setCustomHtml
 }
 </script>
 </body>

@@ -2,6 +2,9 @@ import sys,os
 from PySide6.QtWidgets import *
 from PySide6.QtGui import *
 from PySide6.QtCore import *
+from PySide6.QtWebChannel import *
+from PySide6.QtWebEngineCore import *
+from PySide6.QtWebEngineWidgets import *
 from ui_local_ui import Ui_MainWindow
 import cmd_model
 import enumList
@@ -10,6 +13,17 @@ import res_text
 enum_log = enumList.enumList_log()
 enum_model = enumList.enumList_model()
 enum_child_model_UI = enumList.enumList_UI()
+enum_child_model_core = enumList.enumList_Core()
+class JsBridge(QObject):
+    def __init__(self,owner):
+        super().__init__()
+        self.owner = owner
+    @Slot()
+    def H_onLaunchGame(self):
+        self.owner.H_onLaunchGame()
+    @Slot()
+    def H_onCloseGame(self):
+        self.owner.H_onCloseGame()
 class LuncherUI(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -49,6 +63,13 @@ class LuncherUI(QMainWindow):
         self.ui.tabWidget.setCurrentIndex(0)
         cmd_model.print_log('UI core is set style',enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None)
         self.ui.page.setStyleSheet(str(res_text.sk(enumList.theme.DARK)))
+        cmd_model.print_log('Core is build js',enum_log.INFO,enum_model.CORE,enum_child_model_core.GAMEPMGR,None)
+        self.js = JsBridge(self)
+        #Home
+        cmd_model.print_log('UI core is HTML create js contenw JS id H_ ',enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None)
+        self.chnnel_h = QWebChannel()
+        self.chnnel_h.registerObject("bridge",self.js)
+        self.ui.webEngineView.page().setWebChannel(self.chnnel_h)
         cmd_model.print_log('UI core is read run.html html',enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None)
         run_html = os.path.abspath("Local/run.html")
         self.ui.webEngineView.setUrl(QUrl.fromLocalFile(run_html))
@@ -73,3 +94,7 @@ class LuncherUI(QMainWindow):
         cmd_model.print_log(fileRW.RFTxtLine(self.uiui,1),enum_log.INFO,enum_model.ALL,'all',None)
     def new_users(self):
         cmd_model.print_log(fileRW.RFTxtLine(self.uiui,2),enum_log.INFO,enum_model.ALL,'all',None)
+    def H_onLaunchGame(self):
+        cmd_model.print_log('Core is run game',enum_log.INFO,enum_model.CORE,enum_child_model_core.GAMEPMGR,None)
+    def H_onCloseGame(self):
+        cmd_model.print_log('Core is close game',enum_log.INFO,enum_model.CORE,enum_child_model_core.GAMEPMGR,None)

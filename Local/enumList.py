@@ -17,6 +17,8 @@ class enumList_model:
     ALL = 'NL.AllModel'
 class enumList_UI:
     UI = 'Nl.Frontend.UImodel.UI'
+class enumList_Core:
+    GAMEPMGR = "NL.Common.Core.Game.GameProcessManger"
 class Other:
     _root = "Local"
     UIUICFG = rf"{_root}\UIcfg.uiui"
