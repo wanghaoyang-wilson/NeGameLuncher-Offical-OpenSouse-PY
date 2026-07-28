@@ -21,10 +21,10 @@ class enumList_Core:
     GAMEPMGR = "NL.Common.Core.Game.GameProcessManger"
 class Other:
     _root = "Local"
-    UIUICFG = rf"{_root}\UIcfg.uiui"
-    APPICO = rf"{_root}\img\ico.ico"
-    MD_FILE = rf"{_root}\info.md"
-    CHINESE = r"Local\chinese.qss"
+    UIUICFG = rf"{_root}/UIcfg.uiui"
+    APPICO = rf"{_root}/img/ico.ico"
+    MD_FILE = rf"{_root}/info.md"
+    CHINESE = r"Local/chinese.qss"
 class language:
     CHINESE = "GL.language.chinese"
 class theme:
