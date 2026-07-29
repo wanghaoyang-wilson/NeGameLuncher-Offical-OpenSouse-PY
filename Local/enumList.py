@@ -1,3 +1,4 @@
+import EMCC
 class enumList_log:
     """
     此处是日志枚举类定义：
@@ -15,6 +16,13 @@ class enumList_model:
     AUTH = 'NL.Backend.authModel'
     LOGGER = 'NL.backenf.loggerModel'
     ALL = 'NL.AllModel'
+class Event_code:
+    CORE = 0
+    UI = 1
+    NETWORK = 2
+    AUH = 3
+    LOGGER = 4
+    ALL = 5
 class enumList_UI:
     UI = 'Nl.Frontend.UImodel.UI'
 class enumList_Core:
@@ -29,6 +37,11 @@ class language:
     CHINESE = "GL.language.chinese"
 class theme:
     DARK = 'NL.Theme.Dark'
+class MsgCode:
+    EVENT_GAME_START = 0 
+class MsgText:
+    def change(code):
+        return EMCC.look(code)
 VERSION = "V1.0"
 NAME = "Habor"
 TYPE = "ALPHA"
