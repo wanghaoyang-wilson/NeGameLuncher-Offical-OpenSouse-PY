@@ -1,4 +1,4 @@
-import sys,os
+import sys,os,json
 from PySide6.QtWidgets import *
 from PySide6.QtGui import *
 from PySide6.QtCore import *
@@ -45,6 +45,132 @@ class JsBridge_H(QObject):
     @Slot(str)
     def H_onNicknameChanged(self,name:str):
         self.owner.H_onNicknameChanged(name)
+EMPTY_PLACEHOLDER_UID = "placeholder_empty_warehouse"
+
+class WarehouseListModel(QAbstractListModel):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._data_list = []
+        self._placeholder_item = {
+            "uid": EMPTY_PLACEHOLDER_UID,
+            "icon_key": "",
+            "name": "仓库暂无物品",
+            "version": "",
+            "count": 0,
+            "is_placeholder": True
+        }
+
+    def rowCount(self, parent=QModelIndex()):
+        if not parent.isValid():
+            if len(self._data_list) == 0:
+                return 1
+            return len(self._data_list)
+        return 0
+
+    def data(self, index: QModelIndex, role=Qt.DisplayRole):
+        if not index.isValid():
+            return None
+
+        if len(self._data_list) == 0:
+            row_data = self._placeholder_item
+        else:
+            row_data = self._data_list[index.row()]
+
+        if role == Qt.DisplayRole:
+            return row_data["name"]
+        if role == Qt.UserRole:
+            return row_data
+        return None
+
+    def flags(self, index: QModelIndex):
+        if not index.isValid():
+            return Qt.NoItemFlags
+        # 无数据 = 占位行，禁止选中
+        if len(self._data_list) == 0:
+            return Qt.NoItemFlags
+        return Qt.ItemIsSelectable | Qt.ItemIsEnabled
+
+    def add_item(self, icon_key: str, name: str, version: str, uid: str, count: int = 1):
+        item = {
+            "uid": uid,
+            "icon_key": icon_key,
+            "name": name,
+            "version": version,
+            "count": count,
+            "is_placeholder": False
+        }
+        self.beginInsertRows(QModelIndex(), len(self._data_list), len(self._data_list))
+        self._data_list.append(item)
+        self.endInsertRows()
+
+    def clear_all(self):
+        self.beginResetModel()
+        self._data_list.clear()
+        self.endResetModel()
+
+    def set_item_count(self, target_uid: str, new_count: int):
+        for idx, item in enumerate(self._data_list):
+            if item["uid"] == target_uid:
+                item["count"] = new_count
+                self.dataChanged.emit(self.index(idx, 0), self.index(idx, 0))
+                break
+
+
+class WarehouseManager:
+    def __init__(self, list_view: QListView):
+        self._view: QListView = list_view
+        self._model = WarehouseListModel()
+        self._view.setModel(self._model)
+        self._view.clicked.connect(self._on_item_click)
+
+        # 强制外部注册点击回调，未注册调用会抛出异常
+        self._click_callback = None
+
+    def set_click_callback(self, callback):
+        """
+        注册点击回调
+        回调签名: func(index: int) -> None
+        """
+        self._click_callback = callback
+
+    def _on_item_click(self, index: QModelIndex):
+        if not self._click_callback:
+            raise RuntimeError("必须调用 set_click_callback 注册点击回调函数！")
+        row_idx = index.row()
+        self._click_callback(row_idx)
+
+    def add_item(self, icon_key: str, name: str, version: str, uid: str, count: int = 1):
+        self._model.add_item(icon_key, name, version, uid, count)
+
+    def clear(self):
+        self._model.clear_all()
+
+    # 内置JSON解析工具
+    @staticmethod
+    def parse_json(raw_str: str):
+        try:
+            return json.loads(raw_str)
+        except Exception as e:
+            return {}
+
+    def set_list(self, json_obj: dict):
+        """
+        接收字典 {"1": {...}, "2": {...}} 格式
+        自动清空原有列表，批量载入物品
+        允许 icon_key 为空字符串
+        """
+        self.clear()
+        # 按键从小到大排序载入
+        sorted_keys = sorted(json_obj.keys(), key=lambda k: int(k))
+        for key in sorted_keys:
+            data = json_obj[key]
+            icon = data.get("icon_key", "")
+            name = data.get("name", "")
+            ver = data.get("version", "")
+            uid = data.get("uid", "")
+            cnt = data.get("count", 1)
+            self.add_item(icon, name, ver, uid, cnt)
+
 class LuncherUI(QMainWindow):
     def __init__(self):
         super().__init__()
