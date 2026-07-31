@@ -226,7 +226,10 @@ class LuncherUI(QMainWindow):
         cmd_model.print_log('UI core is read run.html html',enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None)
         run_html = os.path.abspath("Local/run.html")
         self.ui.webEngineView.setUrl(QUrl.fromLocalFile(run_html))
-
+        #-------------------------repo------------------------
+        self.WarehouseListModel = WarehouseListModel()
+        self.WarehouseManager = WarehouseManager(self.ui.listView)
+        self.WarehouseManager.set_click_callback(self.repo_return_index)
 
     def login(self):
         cmd_model.print_log('UI core login button is push',enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None)
@@ -253,7 +256,7 @@ class LuncherUI(QMainWindow):
 
     def new_users(self):
         cmd_model.print_log(fileRW.RFTxtLine(self.uiui,2),enum_log.INFO,enum_model.ALL,'all',None)
-
+    
     #-------------------------HOME-----------------------
     def H_onLaunchGame(self):
         cmd_model.print_log('Core is run game',enum_log.INFO,enum_model.CORE,enum_child_model_core.GAMEPMGR,None)
@@ -273,3 +276,7 @@ class LuncherUI(QMainWindow):
         cmd_model.print_log('UI core is run users info',enum_log.INFO,enum_model.ALL,'all',None)
     def H_onNicknameChanged(self,name):
         cmd_model.print_log(f'UI core is run change name {name}',enum_log.INFO,enum_model.ALL,'all',None)
+
+    #----------------------------repo-----------------------
+    def repo_return_index(self,index):
+        print(index)

@@ -1,4 +1,4 @@
-import EMCC
+
 class enumList_log:
     """
     此处是日志枚举类定义：
@@ -39,9 +39,12 @@ class theme:
     DARK = 'NL.Theme.Dark'
 class MsgCode:
     EVENT_GAME_START = 0 
+import EMCC
 class MsgText:
     def change(code):
         return EMCC.look(code)
+def Code_group():
+    return EMCC.group
 VERSION = "V1.0"
 NAME = "Habor"
 TYPE = "ALPHA"
