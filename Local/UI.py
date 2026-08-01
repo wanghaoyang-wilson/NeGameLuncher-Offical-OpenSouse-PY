@@ -6,10 +6,12 @@ from PySide6.QtWebChannel import *
 from PySide6.QtWebEngineCore import *
 from PySide6.QtWebEngineWidgets import *
 from ui_local_ui import Ui_MainWindow
+from event_bus import G_event_bus
 import cmd_model
 import enumList
 import fileRW
 import res_text
+code = enumList.MsgCode()
 enum_log = enumList.enumList_log()
 enum_model = enumList.enumList_model()
 enum_child_model_UI = enumList.enumList_UI()
@@ -260,22 +262,30 @@ class LuncherUI(QMainWindow):
     #-------------------------HOME-----------------------
     def H_onLaunchGame(self):
         cmd_model.print_log('Core is run game',enum_log.INFO,enum_model.CORE,enum_child_model_core.GAMEPMGR,None)
+        G_event_bus.publish(code.EVENT_GAME_START)
     def H_onCloseGame(self):
         cmd_model.print_log('Core is close game',enum_log.INFO,enum_model.CORE,enum_child_model_core.GAMEPMGR,None)
+        G_event_bus.publish(code.EVENT_GAME_STOP)
     def H_onSelectVersion(self):
         cmd_model.print_log('UI core is run change game',enum_log.INFO,enum_model.ALL,'all',None)
+        G_event_bus.publish(code.EVENT_GAME_CHANGE)
     def H_onOpenSetting(self):
         cmd_model.print_log('UI core is run game setting',enum_log.INFO,enum_model.ALL,'all',None)
+        G_event_bus.publish(code.EVENT_GAME_SETTING)
     def H_onOfflineMode(self):
         cmd_model.print_log('Core is run off line',enum_log.INFO,enum_model.CORE,enum_child_model_core.GAMEPMGR,None)
+        G_event_bus.publish(code.EVENT_PLAYER_RUN_OFFLINE)
     def H_onLoginClick(self):
         cmd_model.print_log('Core is run on line',enum_log.INFO,enum_model.CORE,enum_child_model_core.GAMEPMGR,None)
     def H_onAvatarLeftClick(self):
         cmd_model.print_log('UI core is run player setting',enum_log.INFO,enum_model.ALL,'all',None)
+        G_event_bus.publish(code.EVENT_PLAYER_SETTING)
     def H_onAvatarRightClick(self):
         cmd_model.print_log('UI core is run users info',enum_log.INFO,enum_model.ALL,'all',None)
+        G_event_bus.publish(code.EVENT_PLAYER_INFO)
     def H_onNicknameChanged(self,name):
         cmd_model.print_log(f'UI core is run change name {name}',enum_log.INFO,enum_model.ALL,'all',None)
+        G_event_bus.publish(code.EVENT_PLAYER_CHANGE_NAME)
 
     #----------------------------repo-----------------------
     def repo_return_index(self,index):

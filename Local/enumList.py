@@ -38,13 +38,21 @@ class language:
 class theme:
     DARK = 'NL.Theme.Dark'
 class MsgCode:
-    EVENT_GAME_START = 0 
+    EVENT_GAME_START         = 0 
+    EVENT_GAME_STOP          = 1
+    EVENT_GAME_CHANGE        = 2
+    EVENT_GAME_SETTING       = 3
+    EVENT_PLAYER_SETTING     = 4
+    EVENT_PLAYER_INFO        = 5
+    EVENT_PLAYER_CHANGE_NAME = 6
+    EVENT_PLAYER_RUN_OFFLINE = 7
+    EVENT_REPO_CHILCK_GAME   = 8
+    EVENT_REPO_CHANGE_GAME   = 9
 import EMCC
 class MsgText:
     def change(code):
         return EMCC.look(code)
-def Code_group():
-    return EMCC.group
+Code_Group = EMCC.group
 VERSION = "V1.0"
 NAME = "Habor"
 TYPE = "ALPHA"
