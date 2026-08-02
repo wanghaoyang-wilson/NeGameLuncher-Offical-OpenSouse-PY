@@ -11,6 +11,8 @@ import cmd_model
 import enumList
 import fileRW
 import res_text
+os.environ["QT_API"] = "pyside6"
+os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = "PySide6/plugins"
 code = enumList.MsgCode()
 enum_log = enumList.enumList_log()
 enum_model = enumList.enumList_model()
