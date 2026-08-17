@@ -1,6 +1,6 @@
 from pathlib import Path
 import json
-
+import cmd_model
 class ConfigManager:
     def __init__(self, config_file: Path):
         self.file_path: Path = config_file
@@ -33,9 +33,9 @@ class ConfigManager:
             )
             # 手动写入字符串，完全可控
             with open(self.file_path, "w", encoding="utf-8") as f:
-                print(f"[写入中] {self.file_path} ...")
+                cmd_model.print_log(f"[写入中] {self.file_path} ...", "Logmodel.type.debug")
                 f.write(json_text)
-            print(f"[写入完成] {self.file_path}")
+            cmd_model.print_log(f"[写入完成] {self.file_path}", "Logmodel.type.debug")
         except PermissionError:
             raise PermissionError(
                 f"【写入权限错误】无法写入 {self.file_path}\n"

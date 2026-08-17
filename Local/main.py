@@ -17,6 +17,7 @@ def file_init():
     fileRW.create_file(f"{enumList.CFGDIRROOT}/version.json"), ""
     config_mgr.CfgJsonRun()
     config_mgr.init_cfg()
+    fileRW.create_file(f"{enumList.LOGDIRROOT}/log.txt","")
 def main(argv = None):
     file_init()
     app = QApplication(sys.argv)

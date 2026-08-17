@@ -3,6 +3,7 @@ import time_out
 import threading
 current = threading.current_thread()
 SHOW_LOG = True
+print_list = []
 def print_log(text,type=enumList.enumList_log.INFO,Model=None,ChildModel=None,threadld=None):
     if type == enumList.enumList_log.DEBUG:
         text_type = "DEBUG"
@@ -18,5 +19,4 @@ def print_log(text,type=enumList.enumList_log.INFO,Model=None,ChildModel=None,th
         text_type = '????'
     if SHOW_LOG:
         print(f"[{time_out.returnTimeOut()}] [{text_type}] [{Model}] [{ChildModel}] [{threadld}] : {text}")
-
- 
+        print_list.append(f"[{time_out.returnTimeOut()}] [{text_type}] [{Model}] [{ChildModel}] [{threadld}] : {text}")

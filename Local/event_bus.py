@@ -56,7 +56,7 @@ class EventBus:
                 sub_runtime_id, callback, allow_group_list = entry
 
                 # 分组白名单过滤 逻辑不变
-                if event_group_code != enumList.Event_code.ALL and event_group_code not in allow_group_list:
+                if event_group_code != enumList.Event_code.ALL and int(event_group_code) not in allow_group_list:
                     continue
 
                 # 执行回调，出错直接向上抛出，不内部吞异常

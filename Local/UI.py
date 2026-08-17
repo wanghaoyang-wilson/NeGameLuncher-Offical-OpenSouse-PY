@@ -11,6 +11,7 @@ import cmd_model
 import enumList
 import fileRW
 import res_text
+import event_core
 os.environ["QT_API"] = "pyside6"
 os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = "PySide6/plugins"
 code = enumList.MsgCode()
@@ -49,6 +50,17 @@ class JsBridge_H(QObject):
     @Slot(str)
     def H_onNicknameChanged(self,name:str):
         self.owner.H_onNicknameChanged(name)
+class RepoQJSObject(QObject):
+    def __init__(self, owner):
+        super().__init__()
+        self.owner = owner
+
+    @Slot()
+    def RunGame(self):
+        self.owner.H_onLaunchGame()
+    @Slot()
+    def ChangeGame(self):
+        self.owner.H_onSelectVersion()
 EMPTY_PLACEHOLDER_UID = "placeholder_empty_warehouse"
 
 class WarehouseListModel(QAbstractListModel):
@@ -230,11 +242,15 @@ class LuncherUI(QMainWindow):
         cmd_model.print_log('UI core is read run.html html',enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None)
         run_html = os.path.abspath("Local/run.html")
         self.ui.webEngineView.setUrl(QUrl.fromLocalFile(run_html))
+        name = event_core.event_core.Home_Player_Name_get()
+        self.ui.webEngineView.page().runJavaScript(f"setPlayerName({name});")
         #-------------------------repo------------------------
         self.WarehouseListModel = WarehouseListModel()
         self.WarehouseManager = WarehouseManager(self.ui.listView)
         self.WarehouseManager.set_click_callback(self.repo_return_index)
-
+        G_event_bus.SubEvent(code.EVENT_GAME_CHANGE,0,self.test,enumList.Event_code.UI)
+    def test(self):
+        print("aaa")
     def login(self):
         cmd_model.print_log('UI core login button is push',enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None)
         if not(self.ui.Main_ZhangHao_Input.text() == None or self.ui.Main_PassWord_Input.text() == None):
@@ -248,6 +264,8 @@ class LuncherUI(QMainWindow):
     def exit(self):
         cmd_model.print_log('UI core exit by engine',enum_log.INFO,enum_model.ALL,'all',None)
         cmd_model.print_log(fileRW.RFTxtLine(self.uiui,0),enum_log.INFO,enum_model.ALL,'all',None)
+        log = "\r".join(cmd_model.print_list)
+        fileRW.write_file(f"{enumList.LOGDIRROOT}/log.txt", log)
         self.uiui.close()
         self.close()
 
@@ -287,8 +305,8 @@ class LuncherUI(QMainWindow):
         G_event_bus.publish(code.EVENT_PLAYER_INFO)
     def H_onNicknameChanged(self,name):
         cmd_model.print_log(f'UI core is run change name {name}',enum_log.INFO,enum_model.ALL,'all',None)
-        G_event_bus.publish(code.EVENT_PLAYER_CHANGE_NAME)
-
+        G_event_bus.publish(code.EVENT_PLAYER_CHANGE_NAME,name)
+ 
     #----------------------------repo-----------------------
     def repo_return_index(self,index):
         print(index)

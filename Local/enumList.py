@@ -62,3 +62,7 @@ CATHDIRROOT = None
 CFGDIRROOT = None
 LOGDIRROOT = None
 NECFGROOT = None
+import os
+current_script_path = os.path.abspath(__file__)
+current_script_directory = os.path.dirname(current_script_path)
+OSPATH = current_script_directory
