@@ -12,6 +12,7 @@ import enumList
 import fileRW
 import res_text
 import event_core
+import drive_mgr
 os.environ["QT_API"] = "pyside6"
 os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = "PySide6/plugins"
 code = enumList.MsgCode()
@@ -268,7 +269,8 @@ class LuncherUI(QMainWindow):
         fileRW.write_file(f"{enumList.LOGDIRROOT}/log.txt", log)
         self.uiui.close()
         self.close()
-
+    def closeEvent(self, event):
+        self.exit()
     def setPage(self,valve,num):
         valve.setCurrentIndex(num)
         cmd_model.print_log(f"UI Core Set Page to {num+1} page",enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None)

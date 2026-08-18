@@ -4,6 +4,7 @@ import enumList
 import fileRW
 import res_text
 import config_mgr
+import drive_mgr
 def file_init():
     List = fileRW.create_project_flat_directories("NeGameLauncher", "config", "cache", "log")
     enumList.CFGDIRROOT = List[1]
@@ -18,6 +19,7 @@ def file_init():
     config_mgr.CfgJsonRun()
     config_mgr.init_cfg()
     fileRW.create_file(f"{enumList.LOGDIRROOT}/log.txt","")
+    drive_mgr.start()
 def main(argv = None):
     file_init()
     app = QApplication(sys.argv)
