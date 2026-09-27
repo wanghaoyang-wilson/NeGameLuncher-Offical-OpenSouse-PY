@@ -15,7 +15,7 @@ def pop_crash_dialog(title: str, msg: str):
 
 
 def _validate_register_name(reg_name: str) -> Tuple[bool, str]:
-    """校验驱动注册名规则：至少2个.；不允许 \ / """
+    """校验驱动注册名规则：至少2个'.'；不允许反斜杠或正斜杠"""
     if not isinstance(reg_name, str):
         return False, "注册名必须是字符串"
     if not reg_name.strip():
@@ -36,6 +36,39 @@ class DriveMetaData:
         self.instance: Any = instance                # NeGameEngineDriveClass实例
         self.enable: bool = True                     # 是否启用
         self.load_success: bool = True               # 是否加载成功
+        self.context: Optional["DriveContext"] = None  # 注入上下文
+
+
+class DriveContext:
+    """
+    驱动注入上下文：引擎把各种「关键信息」注入进来，驱动可按需读取。
+    用法（注入方，例如 drive_mgr / 引擎核心）：
+        drive_core.inject("player_name", "NeHyird")
+        drive_core.inject("event_bus", G_event_bus)
+        drive_core.inject_context(theme=..., version=...)
+    驱动侧读取：
+        ctx = self.context        # 或 self.ctx
+        name = ctx.get("player_name")
+    """
+
+    def __init__(self):
+        self._injects: Dict[str, Any] = {}
+
+    def set(self, key: str, value: Any) -> "DriveContext":
+        self._injects[key] = value
+        return self
+
+    def get(self, key: str, default: Any = None) -> Any:
+        return self._injects.get(key, default)
+
+    def __contains__(self, key: str) -> bool:
+        return key in self._injects
+
+    def keys(self) -> List[str]:
+        return list(self._injects.keys())
+
+    def as_dict(self) -> Dict[str, Any]:
+        return dict(self._injects)
 
 
 class RunDriveCore:
@@ -48,6 +81,55 @@ class RunDriveCore:
         self._drive_meta_list: List[DriveMetaData] = []
         # 错误回调，外部可以注册接收异常
         self.on_error: Optional[Callable[[str, Exception], None]] = None
+        # 注入上下文：可向每个驱动注入各种关键信息
+        self.context: DriveContext = DriveContext()
+
+    # ===================== 注入型 Drive API =====================
+    def inject(self, key: str, value: Any) -> "RunDriveCore":
+        """【API】向驱动注入一条关键信息（可覆盖）。返回自身支持链式。"""
+        self.context.set(key, value)
+        self._propagate_context()
+        return self
+
+    def get_inject(self, key: str, default: Any = None) -> Any:
+        """【API】读取已注入的关键信息。"""
+        return self.context.get(key, default)
+
+    def inject_context(self, **kwargs) -> "RunDriveCore":
+        """【API】批量注入关键信息：inject_context(player="X", theme=...)"""
+        for k, v in kwargs.items():
+            self.context.set(k, v)
+        self._propagate_context()
+        return self
+
+    def get_all_injects(self) -> Dict[str, Any]:
+        """【API】导出全部已注入信息（驱动可见的共享上下文）。"""
+        return self.context.as_dict()
+
+    def _propagate_context(self) -> None:
+        """把当前上下文同步给所有已加载的驱动实例。"""
+        for meta in self._drive_meta_list:
+            self._bind_context(meta)
+
+    def _bind_context(self, meta: DriveMetaData) -> None:
+        """把注入上下文绑定到单个驱动实例。"""
+        if meta is None or meta.instance is None:
+            return
+        meta.context = self.context
+        ins = meta.instance
+        # 驱动若声明 bind_context(ctx) 则调用；否则至少注入 self.context 属性
+        for attr in ("bind_context",):
+            if hasattr(ins, attr) and callable(getattr(ins, attr)):
+                try:
+                    getattr(ins, attr)(self.context)
+                    return
+                except Exception as e:
+                    self._safe_error_callback(meta.module_name, e)
+                    return
+        # 兜底：直接挂到实例属性（ctx / context 均可读）
+        ins.context = self.context
+        if not hasattr(ins, "ctx"):
+            ins.ctx = self.context
 
     def init(self) -> None:
         """【核心入口API】初始化加载所有驱动，加载完成自动执行run()"""
@@ -120,6 +202,7 @@ class RunDriveCore:
 
                 ins = drive_cls()
                 meta = DriveMetaData(mod_name, reg_name, ins)
+                self._bind_context(meta)
                 self._drive_meta_list.append(meta)
 
             except Exception as e:
@@ -223,6 +306,7 @@ class RunDriveCore:
             meta.instance = new_ins
             meta.register_name = new_reg
             meta.load_success = True
+            self._bind_context(meta)
             return True
         except Exception as e:
             self._safe_error_callback(mod_name, e)

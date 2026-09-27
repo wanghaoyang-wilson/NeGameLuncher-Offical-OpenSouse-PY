@@ -20,7 +20,8 @@ class Event_code:
     CORE = 0
     UI = 1
     NETWORK = 2
-    AUH = 3
+    AUTH = 3   # 修正拼写：原误写为 AUH
+    AUH = 3    # 保留旧别名，兼容历史引用
     LOGGER = 4
     ALL = 5
 class enumList_UI:
@@ -37,6 +38,7 @@ class language:
     CHINESE = "GL.language.chinese"
 class theme:
     DARK = 'NL.Theme.Dark'
+    LIGHT = 'NL.Theme.Light'
 class MsgCode:
     EVENT_GAME_START         = 0 
     EVENT_GAME_STOP          = 1

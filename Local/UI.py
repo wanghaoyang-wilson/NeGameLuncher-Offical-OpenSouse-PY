@@ -62,6 +62,20 @@ class RepoQJSObject(QObject):
     @Slot()
     def ChangeGame(self):
         self.owner.H_onSelectVersion()
+
+
+class PyNotifyBridge(QObject):
+    """
+    Python -> JS 反向推送桥：
+    注册到 QWebChannel 后，JS 侧订阅 pySignal 信号即可接收 Python 主动推送的事件。
+    用法：self.py_bridge.emit_py("playerNameChanged", "NeHyird")
+    JS 侧：channel.objects.pyBridge.pySignal.connect((topic, payload)=>{...})
+    """
+    pySignal = Signal(str, str)
+
+    def emit_py(self, topic: str, payload: str = ""):
+        """从 Python 主动向 JS 推送事件（payload 建议传 JSON 字符串）。"""
+        self.pySignal.emit(topic, payload)
 EMPTY_PLACEHOLDER_UID = "placeholder_empty_warehouse"
 
 class WarehouseListModel(QAbstractListModel):
@@ -191,6 +205,9 @@ class WarehouseManager:
 class LuncherUI(QMainWindow):
     def __init__(self):
         super().__init__()
+        # Python->JS 通道状态（提前初始化，供 apply_theme 等调用 _call_js 使用）
+        self._js_ready = False
+        self._js_pending = []
         #-------------------------init--------------------
         self.ui = Ui_MainWindow()
         cmd_model.print_log('UI core is init',enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None)
@@ -231,7 +248,9 @@ class LuncherUI(QMainWindow):
         self.ui.tabWidget.setCurrentIndex(0)
         #-----------------------style---------------------------
         cmd_model.print_log('UI core is set style',enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None)
-        self.ui.page.setStyleSheet(str(res_text.sk(enumList.theme.DARK)))
+        # 主题应用到全局（QApplication），而不是只套单个 page，保证深/浅色铺满整个窗口
+        self._current_theme = enumList.theme.DARK
+        self.apply_theme(self._current_theme)
         #------------------------js-----------------------------
         cmd_model.print_log('Core is build js',enum_log.INFO,enum_model.CORE,enum_child_model_core.GAMEPMGR,None)
         self.js = JsBridge_H(self)
@@ -239,17 +258,76 @@ class LuncherUI(QMainWindow):
         cmd_model.print_log('UI core is HTML create js contenw JS id H_ ',enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None)
         self.chnnel_h = QWebChannel()
         self.chnnel_h.registerObject("bridge",self.js)
+        # 注册 Python->JS 反向推送桥
+        self.py_bridge = PyNotifyBridge(self)
+        self.chnnel_h.registerObject("pyBridge", self.py_bridge)
         self.ui.webEngineView.page().setWebChannel(self.chnnel_h)
+        # Python->JS 直接调用：等页面加载完成后再调用（避免 setPlayerName is not defined）
+        self._js_initial_name = event_core.event_core.Home_Player_Name_get()
         cmd_model.print_log('UI core is read run.html html',enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None)
         run_html = os.path.abspath("Local/run.html")
         self.ui.webEngineView.setUrl(QUrl.fromLocalFile(run_html))
-        name = event_core.event_core.Home_Player_Name_get()
-        self.ui.webEngineView.page().runJavaScript(f"setPlayerName({name});")
+        self.ui.webEngineView.page().loadFinished.connect(self._on_page_loaded)
         #-------------------------repo------------------------
         self.WarehouseListModel = WarehouseListModel()
         self.WarehouseManager = WarehouseManager(self.ui.listView)
         self.WarehouseManager.set_click_callback(self.repo_return_index)
         G_event_bus.SubEvent(code.EVENT_GAME_CHANGE,0,self.test,enumList.Event_code.UI)
+
+    # ===================== Python -> JS 双向桥 =====================
+    def _call_js(self, func_name: str, *args):
+        """
+        安全调用页面里的 JS 函数：参数用 JSON 序列化（避免引号/命名冲突），
+        页面未加载完成时先排队，loadFinished 后统一执行。
+        """
+        args_json = ", ".join(json.dumps(a, ensure_ascii=False) for a in args)
+        script = f"{func_name}({args_json});"
+        page = self.ui.webEngineView.page()
+        if self._js_ready:
+            try:
+                page.runJavaScript(script)
+            except Exception as e:
+                cmd_model.print_log(f"Python->JS 调用 {func_name} 异常:{e}", enum_log.ERROR)
+        else:
+            self._js_pending.append(script)
+
+    def push_to_js(self, topic: str, payload=""):
+        """Python 主动向 JS 推送事件（走 QWebChannel 信号，双向通信的 Python->JS 通道）。"""
+        self.py_bridge.emit_py(topic, payload)
+
+    def _on_page_loaded(self, ok: bool):
+        """页面加载完成后：刷新状态并补发排队的 JS 调用。"""
+        self._js_ready = True
+        # 初始状态同步
+        self._call_js("setPlayerName", self._js_initial_name)
+        self._call_js("applyTheme", self._current_theme)
+        # 补发排队调用
+        for script in self._js_pending:
+            self.ui.webEngineView.page().runJavaScript(script)
+        self._js_pending.clear()
+        cmd_model.print_log(f"页面加载完成 ok={ok}，Python->JS 通道就绪", enum_log.INFO)
+
+    # ===================== 主题 =====================
+    def apply_theme(self, theme):
+        """应用主题到全局：QSS 全局生效 + 通知 HTML 同步切换。"""
+        self._current_theme = theme
+        qss = res_text.read_qss(theme)
+        QApplication.instance().setStyleSheet(qss)
+        # 通知前端切换配色
+        try:
+            self._call_js("applyTheme", theme)
+        except Exception as e:
+            cmd_model.print_log(f"推送主题到 HTML 异常:{e}", enum_log.INFO)
+        cmd_model.print_log(f"主题已应用到全局: {theme}", enum_log.INFO)
+
+    def switch_theme(self, theme):
+        """对外切换主题入口。"""
+        self.apply_theme(theme)
+
+    def set_player_name_ui(self, name: str):
+        """Python 主动更新前端玩家名（改名字后调用）。"""
+        self._call_js("setPlayerName", name)
+
     def test(self):
         print("aaa")
     def login(self):

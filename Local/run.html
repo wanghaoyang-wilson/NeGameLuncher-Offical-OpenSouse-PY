@@ -1,17 +1,35 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NE Launcher</title>
 <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
 <style>
+:root{
+    --bg-body:#1e2430; --bg-left:#12151c; --bg-right:#1e2430;
+    --bg-card:#1f2937; --bg-panel:#252c3a; --bg-debug:#0f131a;
+    --text-main:#e4e7ed; --text-muted:#94a3b8; --text-disabled:#818896;
+    --border-soft:rgba(255,255,255,0.1); --border-log:rgba(255,255,255,0.06);
+    --border-stat:rgba(255,255,0,0.04); --border-debug:#334155;
+    --btn-primary:#1d4ed8; --btn-primary-hover:#1e40af;
+    --btn-soft:#1f2937; --btn-soft-border:#374151;
+}
+[data-theme="light"]{
+    --bg-body:#f1f5f9; --bg-left:#e2e8f0; --bg-right:#f1f5f9;
+    --bg-card:#ffffff; --bg-panel:#cbd5e1; --bg-debug:#ffffff;
+    --text-main:#1e293b; --text-muted:#475569; --text-disabled:#94a3b8;
+    --border-soft:rgba(100,116,139,0.3); --border-log:rgba(100,116,139,0.15);
+    --border-stat:rgba(234,179,8,0.15); --border-debug:#cbd5e1;
+    --btn-primary:#2563eb; --btn-primary-hover:#1e40af;
+    --btn-soft:#ffffff; --btn-soft-border:#cbd5e1;
+}
 *{margin:0;padding:0;box-sizing:border-box}
 body{
     width:831px;
     height:571px;
-    background:#1e2430;
-    color:#e4e7ed;
+    background:var(--bg-body);
+    color:var(--text-main);
     font-family:system-ui;
     overflow:hidden;
 }
@@ -22,7 +40,7 @@ body{
 }
 .left-dark{
     width:260px;
-    background:#12151c;
+    background:var(--bg-left);
     padding:20px 20px 20px;
     display:flex;
     flex-direction:column;
@@ -45,21 +63,21 @@ body{
     overflow:hidden;
     transition:transform 0.12s ease;
 }
-.offline-btn{background:#2563eb;color:#fff;}
-.login-btn-disabled{background:#1a1f2b;color:#818896;}
+.offline-btn{background:var(--btn-primary);color:#fff;}
+.login-btn-disabled{background:var(--bg-card);color:var(--text-disabled);}
 .login-btn:hover{transform:scale(1.03);}
 .login-btn:active{transform:scale(0.96);}
 .avatar{
-    width:96px;height:96px;border-radius:8px;background:#252c3a;margin-top:24px;
+    width:96px;height:96px;border-radius:8px;background:var(--bg-panel);margin-top:24px;
     position:relative;overflow:hidden;cursor:pointer;
 }
 .player-id-wrap{
     margin-top:12px;width:100%;text-align:center;height:20px;position:relative;
 }
-.player-id-text{font-size:14px;color:#94a3b8;line-height:20px;}
+.player-id-text{font-size:14px;color:var(--text-muted);line-height:20px;}
 .player-id-input{
     position:absolute;left:50%;top:0;transform:translateX(-50%);width:90%;height:20px;
-    background:#1f2937;border:1px solid #3b4454;color:#e4e7ed;border-radius:4px;
+    background:var(--bg-card);border:1px solid var(--border-soft);color:var(--text-main);border-radius:4px;
     padding:0 6px;display:none;outline:none;text-align:center;font-size:14;
 }
 .spacer{flex:1;width:100%;}
@@ -67,7 +85,7 @@ body{
     width:100%;display:flex;flex-direction:column;gap:10px;
 }
 #mainBtn{
-    width:100%;padding:18px 0;background:#1d4ed8;border:none;border-radius:8px;
+    width:100%;padding:18px 0;background:var(--btn-primary);border:none;border-radius:8px;
     color:#fff;position:relative;overflow:hidden;transition:transform 0.12s ease;
     transform:scale(1) !important;
 }
@@ -75,7 +93,7 @@ body{
 #mainBtn:active{transform:scale(0.96) !important;}
 #mainBtn::after{
     content:attr(data-tip);position:absolute;bottom:110%;left:50%;
-    transform:translateX(-50%);background:#0f131a;color:#fff;
+    transform:translateX(-50%);background:var(--bg-debug);color:#fff;
     padding:6px 10px;border-radius:4px;font-size:12px;white-space:nowrap;
     opacity:0;pointer-events:none;transition:opacity 0.2s ease;z-index:99;
 }
@@ -83,14 +101,14 @@ body{
 .launch-title{font-size:22px;font-weight:bold;position:relative;z-index:2;}
 .launch-subtitle{font-size:13px;opacity:0.75;margin-top:4px;position:relative;z-index:2;}
 .vert-btn{
-    width:100%;padding:12px 0;background:#1f2937;border:1px solid #374151;
-    border-radius:6px;color:#e4e7ed;position:relative;overflow:hidden;
+    width:100%;padding:12px 0;background:var(--btn-soft);border:1px solid var(--btn-soft-border);
+    border-radius:6px;color:var(--text-main);position:relative;overflow:hidden;
     transition:transform 0.12s ease;
 }
 .vert-btn:hover{transform:scale(1.03);}
 .vert-btn:active{transform:scale(0.96);}
 .right-light{
-    flex:1;padding:30px;background:#1e2430;position:relative;
+    flex:1;padding:30px;background:var(--bg-right);position:relative;
 }
 *{cursor:auto !important;}
 .load-avatar-loader{
@@ -107,23 +125,26 @@ body{
     transform:scale(0);opacity:0;pointer-events:none;
 }
 .log-content{
-    background:rgba(255,255,255,0.06);padding:12px;border-radius:8px 8px 0 0;
+    background:var(--border-log);padding:12px;border-radius:8px 8px 0 0;
     font-size:12px;min-height:140px;max-height:220px;overflow-y:auto;
+    color:var(--text-main);
 }
 .stat-content{
-    background:rgba(255,255,0.04);padding:10px 12px;border-radius:0 0 8px;font-size:12px;
+    background:var(--border-stat);padding:10px 12px;border-radius:0 0 8px;font-size:12px;
+    color:var(--text-main);
 }
 #customHtmlBox{
     position:absolute;left:20px;top:80px;width:260px;height:320px;
-    border:1px solid rgba(255,255,255,0.1);border-radius:8px;
-    overflow:auto;padding:8px;font-size:12px;color:#e4e7ed;
+    border:1px solid var(--border-soft);border-radius:8px;
+    overflow:auto;padding:8px;font-size:12px;color:var(--text-main);
 }
 .debug-test-box{
     position:absolute;left:10px;top:600px;width:700px;padding:12px;
-    background:#0f131a;border:1px solid #334155;border-radius:6px;
+    background:var(--bg-debug);border:1px solid var(--border-debug);border-radius:6px;
+    color:var(--text-main);
 }
 .debug-test-box button{
-    padding:6px 12px;margin:0 4px;background:#2563eb;border:none;color:#fff;border-radius:4;
+    padding:6px 12px;margin:0 4px;background:var(--btn-primary);border:none;color:#fff;border-radius:4;
 }
 </style>
 </head>
@@ -172,6 +193,7 @@ let isLoading = false;
 let animRunning = false;
 let bridge = null;
 let bridgeReady = false;
+let pyBridge = null;
 
 // 安全调用桥接口，防止未初始化报错、无响应
 function callBridge(funcName, ...args) {
@@ -186,12 +208,31 @@ function callBridge(funcName, ...args) {
     }
 }
 
-// 初始化WebChannel
+// 初始化WebChannel（JS->Python 用 bridge；Python->JS 反向推送用 pyBridge）
 new QWebChannel(qt.webChannelTransport, function (channel) {
     bridge = channel.objects.bridge;
     bridgeReady = true;
+    pyBridge = channel.objects.pyBridge;
+    if (pyBridge && pyBridge.pySignal) {
+        pyBridge.pySignal.connect((topic, payload) => { onPyEvent(topic, payload); });
+    }
     console.log("通信桥初始化完成", bridge);
 });
+
+// Python 主动推送事件处理器（Python->JS 双向通信）
+function onPyEvent(topic, payload) {
+    try {
+        const obj = window.qtWebChannel || {};
+        if (typeof obj.handlePyEvent === "function") {
+            obj.handlePyEvent(topic, payload);
+        }
+        // 常见 topic 直接路由
+        if (topic === "playerNameChanged" && typeof obj.setPlayerName === "function") obj.setPlayerName(payload);
+        if (topic === "themeChanged" && typeof obj.applyTheme === "function") obj.applyTheme(payload);
+    } catch (e) {
+        console.warn("onPyEvent error", e);
+    }
+}
 
 function createRipple(target,e,opacity=0.22,glowOpacity=0.35){
     const rect = target.getBoundingClientRect();
@@ -396,6 +437,12 @@ testCustomHtml.addEventListener('click',()=>{
 function setPlayerName(name){
     idText.innerText=name;
 };
+// 全局 applyTheme（供 Python 直接 runJavaScript 调用，转发到 qtWebChannel）
+function applyTheme(theme){
+    if (window.qtWebChannel && typeof window.qtWebChannel.applyTheme === "function") {
+        window.qtWebChannel.applyTheme(theme);
+    }
+}
 // Python调用JS全局对象（供bridge反向调用页面）
 window.qtWebChannel = {
     setPlayerName(name){idText.innerText=name;},
@@ -406,7 +453,18 @@ window.qtWebChannel = {
     appendLog,
     updateHardwareStat,
     setLaunchFinish,
-    setCustomHtml
+    setCustomHtml,
+    // 主题切换：深色/浅色
+    applyTheme(theme){
+        const isDark = !theme || String(theme).toLowerCase().indexOf("dark") >= 0;
+        document.documentElement.dataset.theme = isDark ? "dark" : "light";
+        console.log("HTML 主题已切换为:", isDark ? "dark" : "light");
+    },
+    // Python 推送事件的通用入口
+    handlePyEvent(topic, payload){
+        window.__lastPyTopic = topic;   // 供测试/调试读取
+        console.log("[Py->JS]", topic, payload);
+    }
 }
 </script>
 </body>

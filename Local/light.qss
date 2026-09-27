@@ -1,0 +1,131 @@
+/* 全局背景兜底 —— 浅色主题 */
+QWidget {
+    background-color: #f1f5f9;
+    color: #1e293b;
+}
+
+/* 主窗口中心容器 */
+QWidget#centralwidget {
+    background-color: #f1f5f9;
+}
+
+/* StackedWidget 页面容器 */
+QStackedWidget {
+    background-color: #f1f5f9;
+    border: none;
+}
+
+QWidget#page {
+    background-color: #f1f5f9;
+}
+
+/* TabWidget 核心修复 */
+QTabWidget::pane {
+    border: none;
+    background-color: #f1f5f9;
+}
+
+QTabWidget::tab-bar {
+    left: 0;
+    top: 0;
+}
+
+QTabBar::tab {
+    background-color: #e2e8f0;
+    color: #475569;
+    padding: 6px 12px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+
+QTabBar::tab:selected {
+    background-color: #2563eb;
+    color: white;
+}
+
+QTabBar::tab:hover:!selected {
+    background-color: #cbd5e1;
+}
+
+/* WebEngine 关键修复 */
+QWebEngineView {
+    background-color: #f1f5f9 !important;
+    border: none;
+}
+
+/* 输入框 */
+QLineEdit#Main_ZhangHao_Input,
+QLineEdit#Main_PassWord_Input {
+    background-color: #ffffff;
+    border: 1px solid rgba(148, 163, 184, 0.6);
+    border-radius: 7px;
+    padding: 9px 12px;
+    color: #1e293b;
+    font-size: 14px;
+}
+
+QLineEdit#Main_ZhangHao_Input:focus,
+QLineEdit#Main_PassWord_Input:focus {
+    border-color: #2563eb;
+}
+
+/* 登录按钮 */
+QPushButton#Main_Login_Button {
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+QPushButton#Main_Login_Button:hover {
+    background-color: #1d4ed8;
+}
+
+QPushButton#Main_Login_Button:pressed {
+    background-color: #1e40af;
+}
+
+/* 离线运行 */
+QPushButton#Main_OffLine_Run {
+    background-color: #ffffff;
+    color: #334155;
+    border: 1px solid rgba(100, 116, 139, 0.4);
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+QPushButton#Main_OffLine_Run:hover {
+    background-color: #e2e8f0;
+}
+
+/* 退出按钮 */
+QPushButton#Main_Exit_Button {
+    background-color: #e2e8f0;
+    color: #475569;
+    border: none;
+    border-radius: 6px;
+}
+
+QPushButton#Main_Exit_Button:hover {
+    background-color: #cbd5e1;
+}
+
+/* 复选框 */
+QCheckBox#remember {
+    color: #475569;
+}
+
+QCheckBox#remember::indicator {
+    width: 15px;
+    height: 15px;
+    border-radius: 4px;
+    border: 1px solid #94a3b8;
+    background-color: #ffffff;
+}
+
+QCheckBox#remember::indicator:checked {
+    background-color: #2563eb;
+    border-color: #3b82f6;
+}

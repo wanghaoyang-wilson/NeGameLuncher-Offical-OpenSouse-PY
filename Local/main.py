@@ -19,6 +19,13 @@ def file_init():
     config_mgr.CfgJsonRun()
     config_mgr.init_cfg()
     fileRW.create_file(f"{enumList.LOGDIRROOT}/log.txt","")
+    # 注入型 Drive API：向所有驱动注入各种关键信息（示例）
+    drive_mgr.inject_context(
+        version=enumList.VERSION_INFO,
+        player_name=config_mgr.Pla.get("playerCfg.name"),
+        theme=enumList.theme.DARK,
+        event_bus=__import__("event_bus", fromlist=["G_event_bus"]).G_event_bus,
+    )
     drive_mgr.start()
 def main(argv = None):
     file_init()
@@ -29,4 +36,6 @@ def main(argv = None):
     win = LuncherUI()
     win.show()
     sys.exit(app.exec())
-main(sys.argv)
+
+if __name__ == "__main__":
+    main(sys.argv)
