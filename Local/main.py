@@ -35,6 +35,10 @@ def main(argv = None):
     app.setOverrideCursor(main_cursor)
     win = LuncherUI()
     win.show()
+    if config_mgr.Pla.get("playerCfg.isDarkMode"):
+        win.switch_theme(enumList.theme.DARK)
+    else:
+        win.switch_theme(enumList.theme.LIGHT)
     sys.exit(app.exec())
 
 if __name__ == "__main__":

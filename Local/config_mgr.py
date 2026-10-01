@@ -16,4 +16,6 @@ def init_cfg():
     Pla.open(default_template={})
     Pla.edit("playerCfg.name", "Player1", overwrite=False)
     Pla.edit("playerCfg.isOffline", True, overwrite=False)
+    Pla.edit("playerCfg.isDarkMode", True, overwrite=False)
+    Pla.edit("playerCfg.isAutoLogin", False, overwrite=False)
     cmd_model.print_log(f"配置初始化已写入 {enumList.CFGDIRROOT}/player.json","Logmodel.type.debug")

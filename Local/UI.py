@@ -12,6 +12,7 @@ import enumList
 import fileRW
 import res_text
 import event_core
+import config_mgr
 import drive_mgr
 os.environ["QT_API"] = "pyside6"
 os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = "PySide6/plugins"
@@ -220,11 +221,15 @@ class LuncherUI(QMainWindow):
         cmd_model.print_log('UI core is set window title',enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None)
         self.setPage(self.ui.stackedWidget,0)
         cmd_model.print_log('UI core load ui config',enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None) 
+        self.ui.remember.setChecked(config_mgr.Pla.get("playerCfg.isAutoLogin"))
+        cmd_model.print_log('UI core is set remember',enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None)
+        if self.ui.remember.isChecked():
+            self.setPage(self.ui.stackedWidget,1)
         #----------------------------connect-----------------
         self.uiui = open(enumList.Other.UIUICFG,"r",encoding="utf-8")
         self.ui.Main_Login_Button.clicked.connect(self.login)
         self.ui.Main_Exit_Button.clicked.connect(self.exit)
-        self.ui.Main_OffLine_Run.clicked.connect(lambda:self.setPage(self.ui.stackedWidget,1))
+        self.ui.Main_OffLine_Run.clicked.connect(self.LoginByOffLine)
         self.ui.Main_instct_Button.clicked.connect(self.new_users)
         self.ui.Main_Lost_Password.clicked.connect(self.lost_password)
         cmd_model.print_log('UI core is instaed button event',enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None) 
@@ -272,7 +277,6 @@ class LuncherUI(QMainWindow):
         self.WarehouseListModel = WarehouseListModel()
         self.WarehouseManager = WarehouseManager(self.ui.listView)
         self.WarehouseManager.set_click_callback(self.repo_return_index)
-        G_event_bus.SubEvent(code.EVENT_GAME_CHANGE,0,self.test,enumList.Event_code.UI)
 
     # ===================== Python -> JS 双向桥 =====================
     def _call_js(self, func_name: str, *args):
@@ -328,8 +332,6 @@ class LuncherUI(QMainWindow):
         """Python 主动更新前端玩家名（改名字后调用）。"""
         self._call_js("setPlayerName", name)
 
-    def test(self):
-        print("aaa")
     def login(self):
         cmd_model.print_log('UI core login button is push',enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None)
         if not(self.ui.Main_ZhangHao_Input.text() == None or self.ui.Main_PassWord_Input.text() == None):
@@ -358,7 +360,17 @@ class LuncherUI(QMainWindow):
 
     def new_users(self):
         cmd_model.print_log(fileRW.RFTxtLine(self.uiui,2),enum_log.INFO,enum_model.ALL,'all',None)
-    
+
+    def saveRember(self):
+        IsChiled = self.ui.remember.isChecked()
+        print(IsChiled)
+        cmd_model.print_log(f"UI Core Set remember to {IsChiled}",enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None)
+        config_mgr.Pla.edit("playerCfg.isAutoLogin", IsChiled, overwrite=True)
+
+    def LoginByOffLine(self):
+        cmd_model.print_log('UI core is run off line',enum_log.INFO,enum_model.CORE,enum_child_model_core.GAMEPMGR,None)
+        self.setPage(self.ui.stackedWidget,1)
+        self.saveRember()
     #-------------------------HOME-----------------------
     def H_onLaunchGame(self):
         cmd_model.print_log('Core is run game',enum_log.INFO,enum_model.CORE,enum_child_model_core.GAMEPMGR,None)
@@ -369,6 +381,7 @@ class LuncherUI(QMainWindow):
     def H_onSelectVersion(self):
         cmd_model.print_log('UI core is run change game',enum_log.INFO,enum_model.ALL,'all',None)
         G_event_bus.publish(code.EVENT_GAME_CHANGE)
+        self.setPage(self.ui.tabWidget,1)
     def H_onOpenSetting(self):
         cmd_model.print_log('UI core is run game setting',enum_log.INFO,enum_model.ALL,'all',None)
         G_event_bus.publish(code.EVENT_GAME_SETTING)
@@ -386,7 +399,7 @@ class LuncherUI(QMainWindow):
     def H_onNicknameChanged(self,name):
         cmd_model.print_log(f'UI core is run change name {name}',enum_log.INFO,enum_model.ALL,'all',None)
         G_event_bus.publish(code.EVENT_PLAYER_CHANGE_NAME,name)
- 
+        self.ui.tabWidget.setTabText(0,f"启动({name})")
     #----------------------------repo-----------------------
     def repo_return_index(self,index):
         print(index)
