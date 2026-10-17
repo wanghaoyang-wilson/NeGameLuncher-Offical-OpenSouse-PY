@@ -14,6 +14,7 @@ import res_text
 import event_core
 import config_mgr
 import drive_mgr
+import time_out
 os.environ["QT_API"] = "pyside6"
 os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = "PySide6/plugins"
 code = enumList.MsgCode()
@@ -204,7 +205,7 @@ class WarehouseManager:
             self.add_item(icon, name, ver, uid, cnt)
 
 class LuncherUI(QMainWindow):
-    def __init__(self):
+    def __init__(self,args=None):
         super().__init__()
         # Python->JS 通道状态（提前初始化，供 apply_theme 等调用 _call_js 使用）
         self._js_ready = False
@@ -217,7 +218,7 @@ class LuncherUI(QMainWindow):
         self.setWindowIcon(QIcon(enumList.Other.APPICO))
         self.setFixedSize(843, 636)
         cmd_model.print_log('UI core is set ico finish',enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None)
-        self.setWindowTitle("Ne启动器")
+        self.setWindowTitle(config_mgr.Cfg.get("versionCfg.title"))
         cmd_model.print_log('UI core is set window title',enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None)
         self.setPage(self.ui.stackedWidget,0)
         cmd_model.print_log('UI core load ui config',enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None) 
@@ -240,7 +241,7 @@ class LuncherUI(QMainWindow):
         cmd_model.print_log('UI core is read md file',enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None) 
         self.ui.Md_Show.setText(md_text)
         cmd_model.print_log('UI core is set md text',enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None) 
-        self.ui.version.setText(enumList.VERSION_INFO)
+        self.ui.version.setText(config_mgr.Cfg.get("versionCfg.version"))
         self.ui.ico.setPixmap(QPixmap(str(enumList.Other.APPICO)))
         #--------------------set_tab_name---------------------
         cmd_model.print_log('UI core is set tab name',enum_log.INFO,enum_model.UI,enum_child_model_UI.UI,None)
@@ -277,6 +278,7 @@ class LuncherUI(QMainWindow):
         self.WarehouseListModel = WarehouseListModel()
         self.WarehouseManager = WarehouseManager(self.ui.listView)
         self.WarehouseManager.set_click_callback(self.repo_return_index)
+        
 
     # ===================== Python -> JS 双向桥 =====================
     def _call_js(self, func_name: str, *args):
@@ -347,6 +349,8 @@ class LuncherUI(QMainWindow):
         cmd_model.print_log(fileRW.RFTxtLine(self.uiui,0),enum_log.INFO,enum_model.ALL,'all',None)
         log = "\r".join(cmd_model.print_list)
         fileRW.write_file(f"{enumList.LOGDIRROOT}/log.txt", log)
+        if config_mgr.Ndb.get("AutoStopNdb"):
+            config_mgr.Ndb.edit("isDebug", False, overwrite=True)
         self.uiui.close()
         self.close()
     def closeEvent(self, event):
@@ -399,7 +403,8 @@ class LuncherUI(QMainWindow):
     def H_onNicknameChanged(self,name):
         cmd_model.print_log(f'UI core is run change name {name}',enum_log.INFO,enum_model.ALL,'all',None)
         G_event_bus.publish(code.EVENT_PLAYER_CHANGE_NAME,name)
-        self.ui.tabWidget.setTabText(0,f"启动({name})")
+        if config_mgr.Ndb.get("isDebug"):
+            self._call_js("setPlayerName", "Dev(注意:Debug模式已开启)")
     #----------------------------repo-----------------------
     def repo_return_index(self,index):
         print(index)

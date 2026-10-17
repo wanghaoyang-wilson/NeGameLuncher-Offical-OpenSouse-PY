@@ -20,3 +20,6 @@ def print_log(text,type=enumList.enumList_log.INFO,Model=None,ChildModel=None,th
     if SHOW_LOG:
         print(f"[{time_out.returnTimeOut()}] [{text_type}] [{Model}] [{ChildModel}] [{threadld}] : {text}")
         print_list.append(f"[{time_out.returnTimeOut()}] [{text_type}] [{Model}] [{ChildModel}] [{threadld}] : {text}")
+def print_log_noInfo(text,*argv):
+    print(text)
+    print_list.append(text)

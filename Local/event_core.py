@@ -13,5 +13,7 @@ class event_core():
         config_mgr.Pla.edit("playerCfg.name", name, overwrite=True)
         cmd_model.print_log(f'UI core is run change name {name}',enumList.enumList_log.INFO,enumList.enumList_model.ALL,'all',None)
     def Home_Player_Name_get(self):
+        if config_mgr.Ndb.get("isDebug"):
+            return "Dev(注意:Debug模式已开启)"
         return config_mgr.Pla.get("playerCfg.name")
 event_core = event_core()

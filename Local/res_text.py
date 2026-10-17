@@ -6,12 +6,13 @@ import enumList
 # 现支持：DARK / LIGHT 两套主题，读取后由调用方应用到全局 QApplication。
 # =====================================================================
 
+import config_mgr
 
 def read_qss(theme) -> str:
     """按主题枚举读取 QSS 文本；未知主题返回空串。"""
-    if theme == enumList.theme.DARK:
+    if theme == enumList.theme.DARK and config_mgr.Ndb.get("IsDisabledQss") is False:
         path = "Local/dark.qss"
-    elif theme == enumList.theme.LIGHT:
+    elif theme == enumList.theme.LIGHT and config_mgr.Ndb.get("IsDisabledQss") is False:
         path = "Local/light.qss"
     else:
         return ""
